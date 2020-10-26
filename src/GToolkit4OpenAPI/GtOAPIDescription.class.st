@@ -16,6 +16,11 @@ GtOAPIDescription >> externalDocs: anObject [
 ]
 
 { #category : #accessing }
+GtOAPIDescription >> info [
+	^ info
+]
+
+{ #category : #accessing }
 GtOAPIDescription >> info: aDictionary [ 
 	info := GtOInfo new rawData:aDictionary.
 ]
