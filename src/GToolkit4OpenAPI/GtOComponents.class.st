@@ -9,7 +9,7 @@ Class {
 		'requestBodies',
 		'headers'
 	],
-	#category : #'GToolkit4OpenAPI-Examples'
+	#category : #'GToolkit4OpenAPI-Model'
 }
 
 { #category : #accessing }
