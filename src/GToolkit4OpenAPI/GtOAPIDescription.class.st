@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'info',
 		'servers',
-		'components'
+		'components',
+		'paths'
 	],
 	#category : #'GToolkit4OpenAPI-Model'
 }
@@ -16,6 +17,19 @@ GtOAPIDescription >> components: aDictionary [
 
 { #category : #accessing }
 GtOAPIDescription >> externalDocs: anObject [ 
+]
+
+{ #category : #accessing }
+GtOAPIDescription >> gtPathsFor: aView [
+	<gtView>
+	^ aView columnedList
+		title: 'Paths' translated;
+		priority: 50;
+		items: [ paths associations sorted ];
+		column: 'Key' text: [ :eachItem | eachItem key gtDisplayText ];
+		column: 'Value' text: [ :eachItem | eachItem value gtDisplayText ];
+		send: [:a | a value];
+		actionUpdateButtonTooltip: 'Update item list'
 ]
 
 { #category : #accessing }
@@ -34,7 +48,13 @@ GtOAPIDescription >> openApiVersion [
 ]
 
 { #category : #accessing }
-GtOAPIDescription >> paths: anObject [ 
+GtOAPIDescription >> paths: aDictionary [
+	| newDictionary |
+	newDictionary := Dictionary new.
+	aDictionary associationsDo:[:each |
+		newDictionary at: each key put: 
+			(GtOPath  new name: each key; rawData: (each value))].
+	paths := newDictionary.
 ]
 
 { #category : #accessing }
