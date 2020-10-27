@@ -7,14 +7,26 @@ Class {
 		'parameters',
 		'examples',
 		'requestBodies',
-		'headers'
+		'headers',
+		'codeGenerator'
 	],
 	#category : #'GToolkit4OpenAPI-Model'
 }
 
 { #category : #accessing }
+GtOComponents >> codeGenOptions: aCodeGenOptions [
+	codeGenerator codeGenOptions: aCodeGenOptions
+]
+
+{ #category : #accessing }
 GtOComponents >> examples: anArray [
 	examples  := anArray collect: [:s | GtOExample new rawData: s]. 
+]
+
+{ #category : #accessing }
+GtOComponents >> generateApiClient [
+	"TODO add a GtOCodeGenerationStatus to track the progress and get a nice summary at the end"
+	self schemas associations collect: [:s | s value generateModelClassUsing: codeGenerator]
 ]
 
 { #category : #accessing }
@@ -24,8 +36,9 @@ GtOComponents >> gtSchemasFor: aView [
 		title: 'Schemas' translated;
 		priority: 50;
 		items: [ schemas associations sorted ];
-		column: 'Key' text: [ :eachItem | eachItem key gtDisplayText ];
-		column: 'Value' text: [ :eachItem | eachItem value gtDisplayText ];
+		column: 'Name' text: [ :eachItem | eachItem key gtDisplayText ];
+		column: 'Type' text: [ :eachItem | eachItem value type ];
+		send: [:s | s value];
 		actionUpdateButtonTooltip: 'Update item list'
 ]
 
@@ -33,6 +46,11 @@ GtOComponents >> gtSchemasFor: aView [
 GtOComponents >> headers: anArray [
 	headers := anArray collect: [:s | GtOHeader new rawData: s]. 
 
+]
+
+{ #category : #accessing }
+GtOComponents >> initialize [
+	codeGenerator := GtOCodeGenerator new.
 ]
 
 { #category : #accessing }
@@ -58,6 +76,11 @@ GtOComponents >> requestBodies: anArray [
 { #category : #accessing }
 GtOComponents >> responses: anArray [
 	responses := anArray collect: [:s | GtOResponse new rawData: s].
+]
+
+{ #category : #accessing }
+GtOComponents >> schemas [
+	^ schemas
 ]
 
 { #category : #accessing }
