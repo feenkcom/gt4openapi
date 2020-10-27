@@ -19,6 +19,11 @@ GtOComponents >> codeGenOptions: aCodeGenOptions [
 ]
 
 { #category : #accessing }
+GtOComponents >> codeGenerator [
+	^ codeGenerator
+]
+
+{ #category : #accessing }
 GtOComponents >> examples: anArray [
 	examples  := anArray collect: [:s | GtOExample new rawData: s]. 
 ]
@@ -26,7 +31,8 @@ GtOComponents >> examples: anArray [
 { #category : #accessing }
 GtOComponents >> generateApiClient [
 	"TODO add a GtOCodeGenerationStatus to track the progress and get a nice summary at the end"
-	self schemas associations collect: [:s | s value generateModelClassUsing: codeGenerator]
+	self schemas associations collect: [:s | s value generateModelClassUsing: codeGenerator].
+	^ codeGenerator.
 ]
 
 { #category : #accessing }

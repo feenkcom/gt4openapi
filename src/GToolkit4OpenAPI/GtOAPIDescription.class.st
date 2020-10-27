@@ -11,6 +11,11 @@ Class {
 }
 
 { #category : #accessing }
+GtOAPIDescription >> components [
+	^ components
+]
+
+{ #category : #accessing }
 GtOAPIDescription >> components: aDictionary [
 	components := GtOComponents new rawData: aDictionary.
 ]

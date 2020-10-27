@@ -7,12 +7,17 @@ Class {
 { #category : #accessing }
 GtOSchema >> generateModelClassUsing: codeGenerator [
 	|properties|
-	properties := nil.
-	(self type = 'object') ifTrue: [properties := rawData at: 'properties'].
-	(self type = 'array') ifTrue: [properties := (rawData at: 'items') at: 'properties'].
-		
+	properties := self properties.
 	properties ifNotNil: [
 		codeGenerator generateClassFor: self withProperties: properties].
+]
+
+{ #category : #accessing }
+GtOSchema >> properties [
+	|properties|
+	(self type = 'object') ifTrue: [properties := rawData at: 'properties' ifAbsent:[ nil]].
+	(self type = 'array') ifTrue: [properties := (rawData at: 'items') at: 'properties'].
+	^ properties
 ]
 
 { #category : #accessing }
