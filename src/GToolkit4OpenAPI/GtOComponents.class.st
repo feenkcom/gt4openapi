@@ -31,6 +31,7 @@ GtOComponents >> examples: anArray [
 { #category : #accessing }
 GtOComponents >> generateApiClient [
 	"TODO add a GtOCodeGenerationStatus to track the progress and get a nice summary at the end"
+	codeGenerator generateBaseModelClass.
 	self schemas associations collect: [:s | s value generateModelClassUsing: codeGenerator].
 	^ codeGenerator.
 ]

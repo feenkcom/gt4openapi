@@ -3,10 +3,21 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'modelClassPrefix',
-		'modelPackageName'
+		'modelPackageName',
+		'modelBaseClassName'
 	],
 	#category : #GToolkit4OpenAPI
 }
+
+{ #category : #accessing }
+GtOCodeGenOptions >> modelBaseClassName [
+	^ modelBaseClassName
+]
+
+{ #category : #accessing }
+GtOCodeGenOptions >> modelBaseClassName: aName [
+	modelBaseClassName := aName
+]
 
 { #category : #accessing }
 GtOCodeGenOptions >> modelClassPrefix [ 

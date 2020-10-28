@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'packageOrganizer',
 		'codeGenOptions',
-		'generatedClasses'
+		'generatedClasses',
+		'baseClass'
 	],
 	#category : #GToolkit4OpenAPI
 }
@@ -17,15 +18,15 @@ GtOCodeGenerator >> addClass: generatedClass at: classSymbol [
 { #category : #accessing }
 GtOCodeGenerator >> addProperty: a in: generatedClass [ 
 	"first create the slot"
-	|slotName|
-	slotName := a key asSymbol.
-	slotName := (slotName first lowercase asString, slotName allButFirst) asSymbol.
+	|slotName key|
+	key := a key asSymbol.
+	slotName := (key first lowercase asString, key allButFirst) asSymbol.
 	generatedClass classLayout slots detectIndex: [:s | s name = slotName] ifNone: [ 				generatedClass addSlot: slotName => InstanceVariableSlot ].
 	"then accessors"
 	"'x={1} and y={2}' format: { x. y }."
 	
 	generatedClass compile: (('{1}: anObject',String lf,'	{1} := anObject') format: {slotName}).
-	generatedClass compile: (('{1}',String lf,'	^ {1}') format: {slotName}).
+	generatedClass compile: (('{1}',String lf,'	^ self rawData at:''{2}''') format: {slotName . key}).
 	
 ]
 
@@ -35,7 +36,7 @@ GtOCodeGenerator >> codeGenOptions: aCodeGenOptions [
 ]
 
 { #category : #accessing }
-GtOCodeGenerator >> ensureClass: aClassName [ 
+GtOCodeGenerator >> ensureBaseClass: aClassName [ 
 	| classSymbol fullPackageName |
 	fullPackageName := codeGenOptions modelPackageName.
 	classSymbol := codeGenOptions modelClassPrefix, aClassName asSymbol.
@@ -46,8 +47,37 @@ GtOCodeGenerator >> ensureClass: aClassName [
 ]
 
 { #category : #accessing }
+GtOCodeGenerator >> ensureClass: aClassName [ 
+	| classSymbol fullPackageName |
+	fullPackageName := codeGenOptions modelPackageName.
+	classSymbol := codeGenOptions modelClassPrefix, aClassName asSymbol.
+	self ensurePackage: fullPackageName.
+	^ classSymbol asClassInEnvironment: Smalltalk globals 
+		ifAbsent: [ (baseClass subclass: classSymbol)
+								  category: fullPackageName ].
+]
+
+{ #category : #accessing }
 GtOCodeGenerator >> ensurePackage: aFullPackageName [ 
 	^ packageOrganizer ensureExistAndRegisterPackageNamed: aFullPackageName
+]
+
+{ #category : #accessing }
+GtOCodeGenerator >> generateBaseModelClass [
+	| slotName |
+	baseClass := self ensureBaseClass: codeGenOptions modelBaseClassName.
+	slotName := #rawData.
+	baseClass classLayout slots detectIndex: [:s | s name = slotName] ifNone: [ 						baseClass addSlot: slotName => InstanceVariableSlot ].
+
+	baseClass compile: 
+	'rawData: anObject
+		rawData := anObject'.
+		
+	baseClass compile: 
+	'rawData
+		^ rawData'.
+	
+	^ baseClass 
 ]
 
 { #category : #accessing }
@@ -79,7 +109,10 @@ GtOCodeGenerator >> gtGeneratedClassesFor: aView [
 
 { #category : #accessing }
 GtOCodeGenerator >> initialize [
-	codeGenOptions := GtOCodeGenOptions new modelClassPrefix: 'MyGtO'; modelPackage:'MyApiModelPackage'.
+	codeGenOptions := GtOCodeGenOptions new 
+		modelClassPrefix: 'MyGtO'; 
+		modelBaseClassName: 'BaseModelClass';
+		modelPackage:'MyApiModelPackage'.
 	packageOrganizer := RPackageOrganizer new.
 	generatedClasses := Dictionary new.
 ]
