@@ -21,6 +21,18 @@ GtOpenApiServer >> description: anObject [
 	description := anObject
 ]
 
+{ #category : #printing }
+GtOpenApiServer >> printOn: aStream [
+	super printOn: aStream.
+
+	self url ifNil: [ ^ self ].
+
+	aStream
+		nextPut: $(;
+		nextPutAll: self url asString;
+		nextPut: $)
+]
+
 { #category : #accessing }
 GtOpenApiServer >> url [
 

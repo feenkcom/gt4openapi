@@ -28,6 +28,18 @@ GtOpenApiParser >> initializeMappingsFor: aMapper [
 	self mappingOfOpenApiResponsesFor: aMapper.
 	self mappingOfOpenApiResponseOrReferenceFor: aMapper.
 	self mappingOfOpenApiResponseFor: aMapper.
+	self mappingOfOpenApiTagFor: aMapper.
+	self mappingOfCollectionOfOpenApiTagFor: aMapper.
+	self mappingOfOpenApiComponentsFor: aMapper.
+	self mappingOfDictionaryOf: GtOpenApiSchema for: aMapper.
+	self mappingOfOpenApiSchemaFor: aMapper
+]
+
+{ #category : #initialization }
+GtOpenApiParser >> mappingOfCollectionOf: aSchemaName for: aMapper [
+	aMapper
+		for: (self nameOfCollection: aSchemaName)
+		customDo: [ :mapping | mapping listOfElementSchema: aSchemaName ]
 ]
 
 { #category : #initialization }
@@ -45,6 +57,18 @@ GtOpenApiParser >> mappingOfCollectionOfOpenApiServerFor: aMapper [
 ]
 
 { #category : #initialization }
+GtOpenApiParser >> mappingOfCollectionOfOpenApiTagFor: aMapper [
+	self mappingOfCollectionOf: GtOpenApiTag for: aMapper
+]
+
+{ #category : #initialization }
+GtOpenApiParser >> mappingOfDictionaryOf: aSchemaName for: aMapper [
+	aMapper
+		for: (self nameOfDictionary: aSchemaName)
+		customDo: [ :mapping | mapping mapWithValueSchema: aSchemaName ]
+]
+
+{ #category : #initialization }
 GtOpenApiParser >> mappingOfDictionaryOfOpenApiResponseOrReferenceFor: aMapper [
 	aMapper
 		for: #DictionaryOfOpenApiResponseOrReference
@@ -56,6 +80,23 @@ GtOpenApiParser >> mappingOfDictionaryOfOpenApiServerVariableFor: aMapper [
 	aMapper
 		for: #DictionaryOfOpenApiServerVariable
 		customDo: [ :mapping | mapping mapWithValueSchema: GtOpenApiServerVariable ]
+]
+
+{ #category : #initialization }
+GtOpenApiParser >> mappingOfOpenApiComponentsFor: aMapper [
+	aMapper
+		for: GtOpenApiComponents
+		do: [ :mapping | 
+			(mapping mapAccessor: #schemas)
+				valueSchema: (self nameOfDictionary: GtOpenApiSchema).
+			mapping mapAccessor: #responses.
+			mapping mapAccessor: #parameters.
+			mapping mapAccessor: #examples.
+			mapping mapAccessor: #requestBodies.
+			mapping mapAccessor: #headers.
+			mapping mapAccessor: #securitySchemes.
+			mapping mapAccessor: #links.
+			mapping mapAccessor: #callbacks ]
 ]
 
 { #category : #initialization }
@@ -85,7 +126,12 @@ GtOpenApiParser >> mappingOfOpenApiFor: aMapper [
 			mapping mapAccessor: #openapi.
 			(mapping mapAccessor: #info) valueSchema: GtOpenApiInfo.
 			(mapping mapAccessor: #servers) valueSchema: #CollectionOfOpenApiServer.
-			(mapping mapAccessor: #paths) valueSchema: GtOpenApiPaths ]
+			(mapping mapAccessor: #paths) valueSchema: GtOpenApiPaths.
+			(mapping mapAccessor: #components) valueSchema: GtOpenApiComponents.
+			mapping mapAccessor: #security.
+			(mapping mapAccessor: #tags)
+				valueSchema: (self nameOfCollection: GtOpenApiTag).
+			mapping mapAccessor: #externalDocs ]
 ]
 
 { #category : #initialization }
@@ -121,16 +167,16 @@ GtOpenApiParser >> mappingOfOpenApiOperationFor: aMapper [
 			(mapping mapAccessor: #externalDocs)
 				valueSchema: GtOpenApiExternalDocumentation.
 			mapping mapAccessor: #operationId.
-			"(mapping mapAccessor: #parameters)
-				valueSchema: #CollectionOfOpenApiParameters.
+			(mapping mapAccessor: #parameters)
+				"valueSchema: #CollectionOfOpenApiParameters".
 			(mapping mapAccessor: #requestBody)
-				valueSchema: #OpenApiRequestBodyOrReference."
+				"valueSchema: #OpenApiRequestBodyOrReference".
 			(mapping mapAccessor: #responses) valueSchema: GtOpenApiResponses.
-			"(mapping mapAccessor: #callbacks)
-				valueSchema: #CollectionOfGtOpenApiCallaback.
+			(mapping mapAccessor: #callbacks)
+				"valueSchema: #CollectionOfGtOpenApiCallaback".
 			mapping mapAccessor: #isDeprecated to: #deprecated.
-			(mapping mapAccessor: #security) valueSchema: GtOpenApiSecurity.
-			(mapping mapAccessor: #servers) valueSchema: #CollectionOfOpenApiServer" ]
+			(mapping mapAccessor: #security) "valueSchema: GtOpenApiSecurity".
+			(mapping mapAccessor: #servers) valueSchema: #CollectionOfOpenApiServer ]
 ]
 
 { #category : #initialization }
@@ -161,9 +207,10 @@ GtOpenApiParser >> mappingOfOpenApiPathItemFor: aMapper [
 			(mapping mapAccessor: #options) valueSchema: GtOpenApiOperation.
 			(mapping mapAccessor: #head) valueSchema: GtOpenApiOperation.
 			(mapping mapAccessor: #patch) valueSchema: GtOpenApiOperation.
-			(mapping mapAccessor: #trace) valueSchema: GtOpenApiOperation.
+			(mapping mapAccessor: #traceOd to: #trace) valueSchema: GtOpenApiOperation.
 			(mapping mapAccessor: #servers) valueSchema: #CollectionOfOpenApiServer.
-			(mapping mapAccessor: #parameters) valueSchema: #CollectionOfOpenApiParameterAndReference. ]
+			(mapping mapAccessor: #parameters)
+				valueSchema: #CollectionOfOpenApiParameterAndReference ]
 ]
 
 { #category : #initialization }
@@ -233,6 +280,15 @@ GtOpenApiParser >> mappingOfOpenApiResponsesFor: aMapper [
 ]
 
 { #category : #initialization }
+GtOpenApiParser >> mappingOfOpenApiSchemaFor: aMapper [
+	aMapper
+		for: GtOpenApiSchema
+		do: [ :mapping | 
+			mapping mapAccessor: #type.
+			mapping mapAccessor: #properties ]
+]
+
+{ #category : #initialization }
 GtOpenApiParser >> mappingOfOpenApiServerFor: aMapper [
 	aMapper
 		for: GtOpenApiServer
@@ -253,6 +309,27 @@ GtOpenApiParser >> mappingOfOpenApiServerVariableFor: aMapper [
 ]
 
 { #category : #initialization }
+GtOpenApiParser >> mappingOfOpenApiTagFor: aMapper [
+	aMapper
+		for: GtOpenApiTag
+		do: [ :mapping | 
+			mapping mapAccessor: #name.
+			mapping mapAccessor: #description.
+			(mapping mapAccessor: #externalDocs)
+				valueSchema: GtOpenApiExternalDocumentation ]
+]
+
+{ #category : #'private - names' }
+GtOpenApiParser >> nameOfCollection: aSchemaName [
+	^ #CollectionOf , aSchemaName asString
+]
+
+{ #category : #'private - names' }
+GtOpenApiParser >> nameOfDictionary: aSchemaName [
+	^ #DictionaryOf , aSchemaName asString
+]
+
+{ #category : #'private - names' }
 GtOpenApiParser >> nameOfReferenceOr: aSchemaName [
 	^ GtOpenApiReference name , 'Or' , aSchemaName asString
 ]
@@ -277,5 +354,5 @@ GtOpenApiParser >> readStream: aReadStream [
 
 { #category : #'api - reading' }
 GtOpenApiParser >> readString: aString [
-	^ self read: GtOpenApi on: aString readStream
+	^ self read: GtOpenApi stream: aString readStream
 ]

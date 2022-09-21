@@ -56,6 +56,22 @@ GtOpenApiPathItem >> get: anObject [
 ]
 
 { #category : #'gt - extensions' }
+GtOpenApiPathItem >> gtOperationsFor: aView [
+	<gtView>
+	^ aView columnedList
+		title: 'Operations';
+		priority: 1;
+		items: [ self operations associations ];
+		column: 'Operation' text: [ :anAssoc | anAssoc key ] width: 80;
+		column: 'ID' text: [ :anAssoc | anAssoc value operationId ];
+		column: 'Description'
+			text: [ :anAssoc | anAssoc value gtOperationViewDescriptionText ]
+			weight: 2;
+		column: 'State' text: [ :anAssoc | anAssoc value gtOperationViewStateText ];
+		send: #value
+]
+
+{ #category : #'gt - extensions' }
 GtOpenApiPathItem >> gtParametersFor: aView [
 	<gtView>
 	self parameters ifNil: [ ^ aView empty ].
@@ -76,6 +92,20 @@ GtOpenApiPathItem >> gtParametersFor: aView [
 			text: [ :aParameter | aParameter gtParametersViewStatusText ]
 ]
 
+{ #category : #'gt - extensions' }
+GtOpenApiPathItem >> gtPathsViewDescriptionText [
+	^ self description ifNil: [ '' ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiPathItem >> gtPathsViewOperationsText [
+	^ String
+		streamContents: [ :aStream | 
+			self operations keys
+				do: [ :aKey | aStream nextPutAll: aKey ]
+				separatedBy: [ aStream nextPutAll: ', ' ] ]
+]
+
 { #category : #accessing }
 GtOpenApiPathItem >> head [
 
@@ -86,6 +116,20 @@ GtOpenApiPathItem >> head [
 GtOpenApiPathItem >> head: anObject [
 
 	head := anObject
+]
+
+{ #category : #accessing }
+GtOpenApiPathItem >> operations [
+	^ OrderedDictionary new
+		at: #get put: self get;
+		at: #put put: self put;
+		at: #post put: self post;
+		at: #delete put: self delete;
+		at: #options put: self options;
+		at: #head put: self head;
+		at: #patch put: self patch;
+		at: #trace put: self traceOp;
+		reject: #isNil
 ]
 
 { #category : #accessing }
@@ -182,4 +226,14 @@ GtOpenApiPathItem >> summary [
 GtOpenApiPathItem >> summary: anObject [
 
 	summary := anObject
+]
+
+{ #category : #accessing }
+GtOpenApiPathItem >> traceOp [
+	^ trace
+]
+
+{ #category : #accessing }
+GtOpenApiPathItem >> traceOp: anOperation [
+	trace := anOperation
 ]

@@ -39,10 +39,7 @@ GtOpenApiResponses >> gtDictionaryFor: aView [
 	^ aView columnedList
 		title: 'Responses';
 		priority: 1;
-		items: [ self dictionary associations ];
-		column: ''
-			text: [ :_ :anIndex | anIndex asRopedText foreground: BrGlamorousColors disabledButtonTextColor ]
-			width: 40;
+		items: [ self dictionary associations sorted: [ :a :b | a key < b key ] ];
 		column: 'Code'
 			text: [ :anAssoc | anAssoc key ]
 			width: 100;

@@ -55,13 +55,35 @@ GtOpenApiOperation >> externalDocs: anObject [
 ]
 
 { #category : #'gt - extensions' }
+GtOpenApiOperation >> gtDescriptionFor: aView [
+	<gtView>
+	self description ifNil: [ ^ aView empty ].
+
+	^ aView textEditor
+		title: 'Description';
+		priority: 1;
+		aptitude: BrGlamorousRegularEditorAptitude;
+		text: [ self description ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiOperation >> gtOperationViewDescriptionText [
+	^ self description ifNil: [ '' ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiOperation >> gtOperationViewStateText [
+	^ self isDeprecated ifTrue: [ 'deprecated' ] ifFalse: [ '' ]
+]
+
+{ #category : #'gt - extensions' }
 GtOpenApiOperation >> gtResponsesFor: aView [
 	<gtView>
 	self responses ifNil: [ ^ aView empty ].
 
 	^ aView forward
 		title: 'Responses';
-		priority: 1;
+		priority: 2;
 		object: [ self responses ];
 		view: #gtDictionaryFor:
 ]
@@ -99,6 +121,18 @@ GtOpenApiOperation >> parameters [
 GtOpenApiOperation >> parameters: anObject [
 
 	parameters := anObject
+]
+
+{ #category : #printing }
+GtOpenApiOperation >> printOn: aStream [
+	super printOn: aStream.
+
+	self operationId ifNil: [ ^ self ].
+
+	aStream
+		nextPut: $(;
+		nextPutAll: self operationId asString;
+		nextPut: $)
 ]
 
 { #category : #accessing }
