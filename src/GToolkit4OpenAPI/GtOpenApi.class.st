@@ -16,7 +16,7 @@ Class {
 
 { #category : #'api - parsing' }
 GtOpenApi class >> fromJsonString: aString [
-	^ GtOpenApiParser default readString: aString
+	^ GtOpenApiParser readString: aString
 ]
 
 { #category : #accessing }

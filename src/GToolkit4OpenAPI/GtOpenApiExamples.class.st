@@ -173,5 +173,5 @@ GtOpenApiExamples >> openApiPathItemObject [
 { #category : #accessing }
 GtOpenApiExamples >> parser [
 	<gtExample>
-	^ GtOpenApiParser default
+	^ GtOpenApiParser
 ]

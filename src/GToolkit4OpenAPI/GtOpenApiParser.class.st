@@ -1,10 +1,18 @@
 Class {
 	#name : #GtOpenApiParser,
 	#superclass : #Object,
-	#traits : 'TGtUniqueInstance',
-	#classTraits : 'TGtUniqueInstance classTrait',
 	#category : #'GToolkit4OpenAPI-New-Parser'
 }
+
+{ #category : #'api - parsing' }
+GtOpenApiParser class >> read: aSchemaName string: aString [
+	^ self new read: aSchemaName string: aString
+]
+
+{ #category : #'api - parsing' }
+GtOpenApiParser class >> readString: aString [
+	^ self new readString: aString
+]
 
 { #category : #initialization }
 GtOpenApiParser >> initializeMappingsFor: aMapper [
@@ -14,7 +22,7 @@ GtOpenApiParser >> initializeMappingsFor: aMapper [
 	self mappingOfOpenApiLicenseFor: aMapper.
 	self mappingOfCollectionOf: GtOpenApiServer for: aMapper.
 	self mappingOfOpenApiServerFor: aMapper.
-	self mappingOfDictionaryOfReferenceOr: GtOpenApiServerVariable for: aMapper.
+	self mappingOfDictionaryOf: GtOpenApiServerVariable for: aMapper.
 	self mappingOfOpenApiServerVariableFor: aMapper.
 	self mappingOfOpenApiPathsFor: aMapper.
 	self mappingOfOpenApiPathItemFor: aMapper.
