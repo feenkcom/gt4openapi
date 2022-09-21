@@ -12,9 +12,9 @@ GtOpenApiParser >> initializeMappingsFor: aMapper [
 	self mappingOfOpenApiInfoFor: aMapper.
 	self mappingOfOpenApiContactFor: aMapper.
 	self mappingOfOpenApiLicenseFor: aMapper.
-	self mappingOfCollectionOfOpenApiServerFor: aMapper.
+	self mappingOfCollectionOf: GtOpenApiServer for: aMapper.
 	self mappingOfOpenApiServerFor: aMapper.
-	self mappingOfDictionaryOfOpenApiServerVariableFor: aMapper.
+	self mappingOfDictionaryOfReferenceOr: GtOpenApiServerVariable for: aMapper.
 	self mappingOfOpenApiServerVariableFor: aMapper.
 	self mappingOfOpenApiPathsFor: aMapper.
 	self mappingOfOpenApiPathItemFor: aMapper.
@@ -22,64 +22,41 @@ GtOpenApiParser >> initializeMappingsFor: aMapper [
 	self mappingOfOpenApiExternalDocumentationFor: aMapper.
 	self mappingOfOpenApiParameterFor: aMapper.
 	self mappingOfOpenApiReferenceFor: aMapper.
-	self mappingOfCollectionOfOpenApiParameterAndReferenceFor: aMapper.
-	self mappingOfOpenApiReferenceOfParameterFor: aMapper.
-	self mappingOfDictionaryOfOpenApiResponseOrReferenceFor: aMapper.
+	self mappingOfCollectionOfReferenceOr: GtOpenApiParameter for: aMapper.
+	self mappingOfReferenceOr: GtOpenApiParameter for: aMapper.
+	self mappingOfDictionaryOfReferenceOr: GtOpenApiResponse for: aMapper.
 	self mappingOfOpenApiResponsesFor: aMapper.
-	self mappingOfOpenApiResponseOrReferenceFor: aMapper.
+	self mappingOfReferenceOr: GtOpenApiResponse for: aMapper.
 	self mappingOfOpenApiResponseFor: aMapper.
 	self mappingOfOpenApiTagFor: aMapper.
-	self mappingOfCollectionOfOpenApiTagFor: aMapper.
+	self mappingOfCollectionOf: GtOpenApiTag for: aMapper.
 	self mappingOfOpenApiComponentsFor: aMapper.
 	self mappingOfDictionaryOf: GtOpenApiSchema for: aMapper.
 	self mappingOfOpenApiSchemaFor: aMapper
 ]
 
-{ #category : #initialization }
+{ #category : #'mapping - utilities' }
 GtOpenApiParser >> mappingOfCollectionOf: aSchemaName for: aMapper [
 	aMapper
 		for: (self nameOfCollection: aSchemaName)
 		customDo: [ :mapping | mapping listOfElementSchema: aSchemaName ]
 ]
 
-{ #category : #initialization }
-GtOpenApiParser >> mappingOfCollectionOfOpenApiParameterAndReferenceFor: aMapper [
-	aMapper
-		for: #CollectionOfOpenApiParameterAndReference
-		customDo: [ :mapping | mapping listOfElementSchema: (self nameOfReferenceOr: GtOpenApiParameter) ]
+{ #category : #'mapping - utilities' }
+GtOpenApiParser >> mappingOfCollectionOfReferenceOr: aSchemaName for: aMapper [
+	self mappingOfCollectionOf: (self nameOfReferenceOr: aSchemaName) for: aMapper
 ]
 
-{ #category : #initialization }
-GtOpenApiParser >> mappingOfCollectionOfOpenApiServerFor: aMapper [
-	aMapper
-		for: #CollectionOfOpenApiServer
-		customDo: [ :mapping | mapping listOfElementSchema: GtOpenApiServer ]
-]
-
-{ #category : #initialization }
-GtOpenApiParser >> mappingOfCollectionOfOpenApiTagFor: aMapper [
-	self mappingOfCollectionOf: GtOpenApiTag for: aMapper
-]
-
-{ #category : #initialization }
+{ #category : #'mapping - utilities' }
 GtOpenApiParser >> mappingOfDictionaryOf: aSchemaName for: aMapper [
 	aMapper
 		for: (self nameOfDictionary: aSchemaName)
 		customDo: [ :mapping | mapping mapWithValueSchema: aSchemaName ]
 ]
 
-{ #category : #initialization }
-GtOpenApiParser >> mappingOfDictionaryOfOpenApiResponseOrReferenceFor: aMapper [
-	aMapper
-		for: #DictionaryOfOpenApiResponseOrReference
-		customDo: [ :mapping | mapping mapWithValueSchema: (self nameOfReferenceOr: GtOpenApiResponse) ]
-]
-
-{ #category : #initialization }
-GtOpenApiParser >> mappingOfDictionaryOfOpenApiServerVariableFor: aMapper [
-	aMapper
-		for: #DictionaryOfOpenApiServerVariable
-		customDo: [ :mapping | mapping mapWithValueSchema: GtOpenApiServerVariable ]
+{ #category : #'mapping - utilities' }
+GtOpenApiParser >> mappingOfDictionaryOfReferenceOr: aSchemaName for: aMapper [
+	self mappingOfDictionaryOf: (self nameOfReferenceOr: aSchemaName) for: aMapper
 ]
 
 { #category : #initialization }
@@ -125,7 +102,8 @@ GtOpenApiParser >> mappingOfOpenApiFor: aMapper [
 		do: [ :mapping | 
 			mapping mapAccessor: #openapi.
 			(mapping mapAccessor: #info) valueSchema: GtOpenApiInfo.
-			(mapping mapAccessor: #servers) valueSchema: #CollectionOfOpenApiServer.
+			(mapping mapAccessor: #servers)
+				valueSchema: (self nameOfCollection: GtOpenApiServer).
 			(mapping mapAccessor: #paths) valueSchema: GtOpenApiPaths.
 			(mapping mapAccessor: #components) valueSchema: GtOpenApiComponents.
 			mapping mapAccessor: #security.
@@ -167,16 +145,14 @@ GtOpenApiParser >> mappingOfOpenApiOperationFor: aMapper [
 			(mapping mapAccessor: #externalDocs)
 				valueSchema: GtOpenApiExternalDocumentation.
 			mapping mapAccessor: #operationId.
-			(mapping mapAccessor: #parameters)
-				"valueSchema: #CollectionOfOpenApiParameters".
-			(mapping mapAccessor: #requestBody)
-				"valueSchema: #OpenApiRequestBodyOrReference".
+			mapping mapAccessor: #parameters.	"valueSchema: #CollectionOfOpenApiParameters"
+			mapping mapAccessor: #requestBody.	"valueSchema: #OpenApiRequestBodyOrReference"
 			(mapping mapAccessor: #responses) valueSchema: GtOpenApiResponses.
-			(mapping mapAccessor: #callbacks)
-				"valueSchema: #CollectionOfGtOpenApiCallaback".
+			mapping mapAccessor: #callbacks.	"valueSchema: #CollectionOfGtOpenApiCallaback"
 			mapping mapAccessor: #isDeprecated to: #deprecated.
-			(mapping mapAccessor: #security) "valueSchema: GtOpenApiSecurity".
-			(mapping mapAccessor: #servers) valueSchema: #CollectionOfOpenApiServer ]
+			mapping mapAccessor: #security.	"valueSchema: GtOpenApiSecurity"
+			(mapping mapAccessor: #servers)
+				valueSchema: (self nameOfCollection: GtOpenApiServer) ]
 ]
 
 { #category : #initialization }
@@ -208,9 +184,10 @@ GtOpenApiParser >> mappingOfOpenApiPathItemFor: aMapper [
 			(mapping mapAccessor: #head) valueSchema: GtOpenApiOperation.
 			(mapping mapAccessor: #patch) valueSchema: GtOpenApiOperation.
 			(mapping mapAccessor: #traceOd to: #trace) valueSchema: GtOpenApiOperation.
-			(mapping mapAccessor: #servers) valueSchema: #CollectionOfOpenApiServer.
+			(mapping mapAccessor: #servers)
+				valueSchema: (self nameOfCollection: GtOpenApiServer).
 			(mapping mapAccessor: #parameters)
-				valueSchema: #CollectionOfOpenApiParameterAndReference ]
+				valueSchema: (self nameOfCollectionOfReferenceOr: GtOpenApiParameter) ]
 ]
 
 { #category : #initialization }
@@ -228,28 +205,6 @@ GtOpenApiParser >> mappingOfOpenApiReferenceFor: aMapper [
 ]
 
 { #category : #initialization }
-GtOpenApiParser >> mappingOfOpenApiReferenceOfParameterFor: aMapper [
-	self mappingOfOpenApiReferenceOr: GtOpenApiParameter for: aMapper
-]
-
-{ #category : #initialization }
-GtOpenApiParser >> mappingOfOpenApiReferenceOr: aSchemeName for: aMapper [
-	aMapper
-		for: (self nameOfReferenceOr: aSchemeName)
-		customDo: [ :mapping | 
-			mapping
-				reader: [ :jsonReader | 
-					| aResult aKey |
-					aKey := jsonReader peekPropertyName asString.
-					aKey = '$ref'
-						ifTrue: [ aResult := jsonReader nextAs: GtOpenApiReference ]
-						ifFalse: [ aResult := jsonReader nextAs: aSchemeName ].
-					aResult ].
-			mapping
-				writer: [ :jsonWriter :object | self error: 'Writer should not be used!' ] ]
-]
-
-{ #category : #initialization }
 GtOpenApiParser >> mappingOfOpenApiResponseFor: aMapper [
 	aMapper
 		for: GtOpenApiResponse
@@ -261,11 +216,6 @@ GtOpenApiParser >> mappingOfOpenApiResponseFor: aMapper [
 ]
 
 { #category : #initialization }
-GtOpenApiParser >> mappingOfOpenApiResponseOrReferenceFor: aMapper [
-	self mappingOfOpenApiReferenceOr: GtOpenApiResponse for: aMapper
-]
-
-{ #category : #initialization }
 GtOpenApiParser >> mappingOfOpenApiResponsesFor: aMapper [
 	aMapper
 		for: GtOpenApiResponses
@@ -273,7 +223,8 @@ GtOpenApiParser >> mappingOfOpenApiResponsesFor: aMapper [
 			mapping
 				reader: [ :jsonReader | 
 					| aDictionary |
-					aDictionary := jsonReader nextAs: #DictionaryOfOpenApiResponseOrReference.
+					aDictionary := jsonReader
+							nextAs: (self nameOfDictionaryOfReferenceOr: GtOpenApiResponse).
 					GtOpenApiResponses new dictionary: aDictionary ].
 
 			mapping writer: [ :jsonWriter :object | self error: 'to be implemented' ] ]
@@ -295,7 +246,8 @@ GtOpenApiParser >> mappingOfOpenApiServerFor: aMapper [
 		do: [ :mapping | 
 			mapping mapAccessor: #url.
 			mapping mapAccessor: #description.
-			(mapping mapAccessor: #variables) valueSchema: #DictionaryOfOpenApiServerVariable ]
+			(mapping mapAccessor: #variables)
+				valueSchema: (self nameOfDictionary: GtOpenApiServerVariable) ]
 ]
 
 { #category : #initialization }
@@ -319,17 +271,44 @@ GtOpenApiParser >> mappingOfOpenApiTagFor: aMapper [
 				valueSchema: GtOpenApiExternalDocumentation ]
 ]
 
-{ #category : #'private - names' }
+{ #category : #'mapping - utilities' }
+GtOpenApiParser >> mappingOfReferenceOr: aSchemeName for: aMapper [
+	aMapper
+		for: (self nameOfReferenceOr: aSchemeName)
+		customDo: [ :mapping | 
+			mapping
+				reader: [ :jsonReader | 
+					| aResult aKey |
+					aKey := jsonReader peekPropertyName asString.
+					aKey = '$ref'
+						ifTrue: [ aResult := jsonReader nextAs: GtOpenApiReference ]
+						ifFalse: [ aResult := jsonReader nextAs: aSchemeName ].
+					aResult ].
+			mapping
+				writer: [ :jsonWriter :object | self error: 'Writer should not be used!' ] ]
+]
+
+{ #category : #'mapping - utilities' }
 GtOpenApiParser >> nameOfCollection: aSchemaName [
 	^ #CollectionOf , aSchemaName asString
 ]
 
-{ #category : #'private - names' }
+{ #category : #'mapping - utilities' }
+GtOpenApiParser >> nameOfCollectionOfReferenceOr: aSchemaName [
+	^ self nameOfCollection: (self nameOfReferenceOr: aSchemaName)
+]
+
+{ #category : #'mapping - utilities' }
 GtOpenApiParser >> nameOfDictionary: aSchemaName [
 	^ #DictionaryOf , aSchemaName asString
 ]
 
-{ #category : #'private - names' }
+{ #category : #'mapping - utilities' }
+GtOpenApiParser >> nameOfDictionaryOfReferenceOr: aSchemaName [
+	^ self nameOfDictionary: (self nameOfReferenceOr: aSchemaName)
+]
+
+{ #category : #'mapping - utilities' }
 GtOpenApiParser >> nameOfReferenceOr: aSchemaName [
 	^ GtOpenApiReference name , 'Or' , aSchemaName asString
 ]
