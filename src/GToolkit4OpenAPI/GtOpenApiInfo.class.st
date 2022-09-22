@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiInfo,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'title',
 		'description',
@@ -11,6 +13,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiInfo >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiInfo: self
+]
 
 { #category : #accessing }
 GtOpenApiInfo >> contact [
@@ -46,6 +53,16 @@ GtOpenApiInfo >> license [
 GtOpenApiInfo >> license: anObject [
 
 	license := anObject
+]
+
+{ #category : #enumerating }
+GtOpenApiInfo >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	"do nothing"
 ]
 
 { #category : #accessing }

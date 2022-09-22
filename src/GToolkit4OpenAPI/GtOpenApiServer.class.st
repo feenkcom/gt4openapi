@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiServer,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'url',
 		'description',
@@ -8,6 +10,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiServer >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiServer: self
+]
 
 { #category : #accessing }
 GtOpenApiServer >> description [
@@ -19,6 +26,16 @@ GtOpenApiServer >> description [
 GtOpenApiServer >> description: anObject [
 
 	description := anObject
+]
+
+{ #category : #enumerating }
+GtOpenApiServer >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	self variables do: [ :eachVariable | eachVariable withObjectsDo: aBlock ]
 ]
 
 { #category : #printing }
@@ -47,8 +64,7 @@ GtOpenApiServer >> url: anObject [
 
 { #category : #accessing }
 GtOpenApiServer >> variables [
-
-	^ variables
+	^ variables ifNil: [ #() ]
 ]
 
 { #category : #accessing }

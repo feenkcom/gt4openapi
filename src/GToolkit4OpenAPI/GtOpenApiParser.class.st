@@ -192,7 +192,7 @@ GtOpenApiParser >> mappingOfOpenApiPathItemFor: aMapper [
 			(mapping mapAccessor: #options) valueSchema: GtOpenApiOperation.
 			(mapping mapAccessor: #head) valueSchema: GtOpenApiOperation.
 			(mapping mapAccessor: #patch) valueSchema: GtOpenApiOperation.
-			(mapping mapAccessor: #traceOd to: #trace) valueSchema: GtOpenApiOperation.
+			(mapping mapAccessor: #traceOp to: #trace) valueSchema: GtOpenApiOperation.
 			(mapping mapAccessor: #servers)
 				valueSchema: (self nameOfCollection: GtOpenApiServer).
 			(mapping mapAccessor: #parameters)
@@ -361,11 +361,15 @@ GtOpenApiParser >> nameOfReferenceOr: aSchemaName [
 
 { #category : #'api - reading' }
 GtOpenApiParser >> read: aJsonSchema stream: aReadStream [
-	| aReader |
+	| aReader anOpenApiObject |
 	aReader := NeoJSONReader on: aReadStream.
 	aReader mapClass: OrderedDictionary.
 	self initializeMappingsFor: aReader.
-	^ aReader nextAs: aJsonSchema
+	anOpenApiObject := aReader nextAs: aJsonSchema.
+	GtOpenApiReferenceResolver new
+		rootObject: anOpenApiObject;
+		resolve.
+	^ anOpenApiObject
 ]
 
 { #category : #'api - reading' }

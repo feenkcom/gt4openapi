@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApi,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'openapi',
 		'info',
@@ -17,6 +19,11 @@ Class {
 { #category : #'api - parsing' }
 GtOpenApi class >> fromJsonString: aString [
 	^ GtOpenApiParser readString: aString
+]
+
+{ #category : #visiting }
+GtOpenApi >> accept: aVisitor [
+	^ aVisitor visitGtOpenApi: self
 ]
 
 { #category : #accessing }
@@ -72,6 +79,19 @@ GtOpenApi >> gtPathsFor: aView [
 		send: #value
 ]
 
+{ #category : #'gt - extensions' }
+GtOpenApi >> gtServersFor: aView [
+	<gtView>
+	self paths ifNil: [ ^ aView empty ].
+
+	^ aView columnedList
+		title: 'Servers';
+		priority: 20;
+		items: [ self servers sorted: [ :a :b | a url < b url ] ];
+		column: 'URL' text: #url;
+		column: 'Description' text: [ :aServer | aServer description ifNil: [ '' ] ]
+]
+
 { #category : #accessing }
 GtOpenApi >> info [
 
@@ -82,6 +102,28 @@ GtOpenApi >> info [
 GtOpenApi >> info: anObject [
 
 	info := anObject
+]
+
+{ #category : #testing }
+GtOpenApi >> isOpenApi [
+	^ true
+]
+
+{ #category : #enumerating }
+GtOpenApi >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	self info withObjectsDo: aBlock.
+	self servers do: [ :eachServer | eachServer withObjectsDo: aBlock ].
+	self paths
+		keysAndValuesDo: [ :aName :aPath | 
+			aBlock cull: aPath cull: aName.
+			aPath objectsDo: aBlock ].
+	self components withObjectsDo: aBlock.
+	self tags do: [ :eachTag | eachTag withObjectsDo: aBlock ]
 ]
 
 { #category : #accessing }
@@ -122,8 +164,7 @@ GtOpenApi >> security: anObject [
 
 { #category : #accessing }
 GtOpenApi >> servers [
-
-	^ servers
+	^ servers ifNil: [ #() ]
 ]
 
 { #category : #accessing }

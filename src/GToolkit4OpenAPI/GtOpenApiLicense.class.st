@@ -1,12 +1,19 @@
 Class {
 	#name : #GtOpenApiLicense,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'name',
 		'url'
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiLicense >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiLicense: self
+]
 
 { #category : #accessing }
 GtOpenApiLicense >> name [

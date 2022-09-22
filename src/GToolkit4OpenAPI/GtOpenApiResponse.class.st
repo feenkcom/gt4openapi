@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiResponse,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'description',
 		'headers',
@@ -9,6 +11,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiResponse >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiResponse: self
+]
 
 { #category : #accessing }
 GtOpenApiResponse >> content [
@@ -35,6 +42,18 @@ GtOpenApiResponse >> description: anObject [
 ]
 
 { #category : #accessing }
+GtOpenApiResponse >> gtContentFor: aView context: aContext [
+	<gtView>
+	aContext at: #gtTreeExpansionLevel ifAbsentPut: [ true ].
+
+	^ aView forward
+		title: 'Content';
+		priority: 1;
+		object: [ self content ];
+		view: #gtTreeFor:context:
+]
+
+{ #category : #accessing }
 GtOpenApiResponse >> headers [
 
 	^ headers
@@ -56,4 +75,14 @@ GtOpenApiResponse >> links [
 GtOpenApiResponse >> links: anObject [
 
 	links := anObject
+]
+
+{ #category : #enumerating }
+GtOpenApiResponse >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	self flag: #todo.
 ]

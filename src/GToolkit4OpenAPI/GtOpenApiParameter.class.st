@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiParameter,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'name',
 		'description',
@@ -11,6 +13,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiParameter >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiParameter: self
+]
 
 { #category : #accessing }
 GtOpenApiParameter >> allowEmptyValue [

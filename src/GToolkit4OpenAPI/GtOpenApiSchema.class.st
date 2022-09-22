@@ -1,11 +1,19 @@
 Class {
 	#name : #GtOpenApiSchema,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
-		'everything'
+		'everything',
+		'name'
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiSchema >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiSchema: self
+]
 
 { #category : #accessing }
 GtOpenApiSchema >> additionalProperties: aValue [
@@ -79,12 +87,11 @@ GtOpenApiSchema >> gtPropertiesFor: aView context: aContext [
 	| anIndexStyler |
 	self everything ifNil: [ ^ aView empty ].
 
-	anIndexStyler := aContext at: #gtTreeExpansionLevel ifAbsentPut: [ true ].
-
-	^ aView columnedList
+	^ aView columnedTree
 		title: 'Properties';
 		priority: 1;
 		items: [ self properties associations ];
+		children: [ :anAssoc | anAssoc value gtPropertiesViewChildren ];
 		column: 'Name'
 			text: [ :anAssoc | 
 				| aName |
@@ -96,6 +103,11 @@ GtOpenApiSchema >> gtPropertiesFor: aView context: aContext [
 					otherwise: [ aName ] ];
 		column: 'Type' text: [ :anAssoc | anAssoc value gtPropertiesViewTypeString ];
 		send: #value
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiSchema >> gtPropertiesViewChildren [
+	^ self properties associations
 ]
 
 { #category : #'gt - extensions' }
@@ -173,8 +185,33 @@ GtOpenApiSchema >> multipleOf: aValue [
 ]
 
 { #category : #accessing }
+GtOpenApiSchema >> name [
+
+	^ name
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> name: anObject [
+
+	name := anObject
+]
+
+{ #category : #accessing }
 GtOpenApiSchema >> not: aValue [
 	everything at: #not put: aValue
+]
+
+{ #category : #enumerating }
+GtOpenApiSchema >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	self properties
+		keysAndValuesDo: [ :aName :anObject | 
+			aBlock cull: anObject cull: aName.
+			anObject objectsDo: aBlock ]
 ]
 
 { #category : #accessing }
@@ -185,6 +222,16 @@ GtOpenApiSchema >> oneOf: aValue [
 { #category : #accessing }
 GtOpenApiSchema >> pattern: aValue [
 	everything at: #pattern put: aValue
+]
+
+{ #category : #printing }
+GtOpenApiSchema >> printOn: aStream [
+	super printOn: aStream.
+	self name ifNil: [ ^ self ].
+	aStream
+		nextPut: $(;
+		nextPutAll: self name asString;
+		nextPut: $)
 ]
 
 { #category : #accessing }

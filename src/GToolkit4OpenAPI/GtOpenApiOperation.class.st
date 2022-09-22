@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiOperation,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'tags',
 		'summary',
@@ -17,6 +19,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiOperation >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiOperation: self
+]
 
 { #category : #accessing }
 GtOpenApiOperation >> callbacks [
@@ -97,6 +104,18 @@ GtOpenApiOperation >> isDeprecated [
 GtOpenApiOperation >> isDeprecated: anObject [
 
 	isDeprecated := anObject
+]
+
+{ #category : #enumerating }
+GtOpenApiOperation >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	self externalDocs ifNotNil: [ :anObject | anObject withObjectsDo: aBlock ].
+	self responses ifNotNil: [ :anObject | anObject withObjectsDo: aBlock ].
+	self servers do: [ :anObject | anObject withObjectsDo: aBlock ].
 ]
 
 { #category : #accessing }

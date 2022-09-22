@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiContact,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'name',
 		'url',
@@ -8,6 +10,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiContact >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiContact: self
+]
 
 { #category : #accessing }
 GtOpenApiContact >> email [

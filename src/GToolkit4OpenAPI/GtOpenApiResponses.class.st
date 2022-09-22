@@ -1,11 +1,18 @@
 Class {
 	#name : #GtOpenApiResponses,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'dictionary'
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiResponses >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiResponses: self
+]
 
 { #category : #accessing }
 GtOpenApiResponses >> atCode: aCode [
@@ -45,6 +52,21 @@ GtOpenApiResponses >> gtDictionaryFor: aView [
 			width: 100;
 		column: 'Description' text: [ :anAssoc | anAssoc value description ];
 		send: #value
+]
+
+{ #category : #enumerating }
+GtOpenApiResponses >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	self dictionary
+		ifNotNil: [ :aDict | 
+			aDict
+				keysAndValuesDo: [ :aCode :anObject | 
+					aBlock cull: anObject cull: aCode.
+					anObject objectsDo: aBlock ] ]
 ]
 
 { #category : #accessing }

@@ -1,12 +1,19 @@
 Class {
 	#name : #GtOpenApiExternalDocumentation,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'description',
 		'url'
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiExternalDocumentation >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiExternalDocumentation: self
+]
 
 { #category : #accessing }
 GtOpenApiExternalDocumentation >> description [

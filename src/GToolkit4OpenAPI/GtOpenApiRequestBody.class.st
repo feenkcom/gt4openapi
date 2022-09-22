@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiRequestBody,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'description',
 		'content',
@@ -8,6 +10,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiRequestBody >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiRequestBody: self
+]
 
 { #category : #accessing }
 GtOpenApiRequestBody >> content [

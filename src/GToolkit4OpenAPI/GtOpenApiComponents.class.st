@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiComponents,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'schemas',
 		'responses',
@@ -14,6 +16,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiComponents >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiComponents: self
+]
 
 { #category : #accessing }
 GtOpenApiComponents >> callbacks [
@@ -89,6 +96,21 @@ GtOpenApiComponents >> links: anObject [
 	links := anObject
 ]
 
+{ #category : #enumerating }
+GtOpenApiComponents >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	self schemas
+		ifNotNil: [ :aDict | 
+			aDict
+				keysAndValuesDo: [ :aName :anObject | 
+					aBlock cull: anObject cull: aName.
+					anObject objectsDo: aBlock ] ]
+]
+
 { #category : #accessing }
 GtOpenApiComponents >> parameters [
 
@@ -120,9 +142,9 @@ GtOpenApiComponents >> schemas [
 ]
 
 { #category : #accessing }
-GtOpenApiComponents >> schemas: anObject [
-
-	schemas := anObject
+GtOpenApiComponents >> schemas: aDictionary [
+	schemas := aDictionary.
+	aDictionary keysAndValuesDo: [ :aName :anObject | anObject name: aName ]
 ]
 
 { #category : #accessing }

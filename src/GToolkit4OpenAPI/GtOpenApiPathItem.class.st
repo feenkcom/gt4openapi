@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiPathItem,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'ref',
 		'summary',
@@ -18,6 +20,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiPathItem >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiPathItem: self
+]
 
 { #category : #accessing }
 GtOpenApiPathItem >> delete [
@@ -118,6 +125,18 @@ GtOpenApiPathItem >> head: anObject [
 	head := anObject
 ]
 
+{ #category : #enumerating }
+GtOpenApiPathItem >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	self operations do: [ :eachOperation | eachOperation withObjectsDo: aBlock ].
+	self servers do: [ :eachServer | eachServer withObjectsDo: aBlock ].
+	self parameters do: [ :eachParameter | eachParameter withObjectsDo: aBlock ].
+]
+
 { #category : #accessing }
 GtOpenApiPathItem >> operations [
 	^ OrderedDictionary new
@@ -146,8 +165,7 @@ GtOpenApiPathItem >> options: anObject [
 
 { #category : #accessing }
 GtOpenApiPathItem >> parameters [
-
-	^ parameters
+	^ parameters ifNil: [ #() ]
 ]
 
 { #category : #accessing }
@@ -206,8 +224,7 @@ GtOpenApiPathItem >> ref: anObject [
 
 { #category : #accessing }
 GtOpenApiPathItem >> servers [
-
-	^ servers
+	^ servers ifNil: [ #() ]
 ]
 
 { #category : #accessing }

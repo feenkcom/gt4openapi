@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiTag,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'name',
 		'description',
@@ -8,6 +10,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiTag >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiTag: self
+]
 
 { #category : #accessing }
 GtOpenApiTag >> description [
@@ -43,6 +50,16 @@ GtOpenApiTag >> name [
 GtOpenApiTag >> name: anObject [
 
 	name := anObject
+]
+
+{ #category : #enumerating }
+GtOpenApiTag >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	self externalDocs ifNotNil: [ :anObject | anObject withObjectsDo: aBlock ]
 ]
 
 { #category : #printing }

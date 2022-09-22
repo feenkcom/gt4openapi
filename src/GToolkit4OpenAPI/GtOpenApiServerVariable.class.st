@@ -1,6 +1,8 @@
 Class {
 	#name : #GtOpenApiServerVariable,
 	#superclass : #Object,
+	#traits : 'TGtOpenApiObject',
+	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'enum',
 		'default',
@@ -8,6 +10,11 @@ Class {
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
+
+{ #category : #visiting }
+GtOpenApiServerVariable >> accept: aVisitor [
+	^ aVisitor visitGtOpenApiServerVariable: self
+]
 
 { #category : #accessing }
 GtOpenApiServerVariable >> default [
@@ -43,4 +50,16 @@ GtOpenApiServerVariable >> enum [
 GtOpenApiServerVariable >> enum: anObject [
 
 	enum := anObject
+]
+
+{ #category : #enumerating }
+GtOpenApiServerVariable >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	"Do nothing"
+
+	
 ]
