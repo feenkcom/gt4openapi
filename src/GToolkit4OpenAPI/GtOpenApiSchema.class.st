@@ -2,47 +2,227 @@ Class {
 	#name : #GtOpenApiSchema,
 	#superclass : #Object,
 	#instVars : [
-		'type',
-		'properties'
+		'everything'
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
 
 { #category : #accessing }
-GtOpenApiSchema >> gtPropertiesFor: aView context: aContext [
+GtOpenApiSchema >> additionalProperties: aValue [
+	everything at: #additionalProperties put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> allOf: aValue [
+	everything at: #allOf put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> anyOf: aValue [
+	everything at: #anyOf put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> default: aValue [
+	everything at: #default put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> description: aValue [
+	everything at: #description put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> enum: aValue [
+	everything at: #enum put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> everything [
+
+	^ everything
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> exclusiveMaximum: aValue [
+	everything at: #exclusiveMaximum put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> exclusiveMinimum: aValue [
+	everything at: #exclusiveMinimum put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> format: aValue [
+	everything at: #format put: aValue
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiSchema >> gtEverythingFor: aView context: aContext [
 	<gtView>
 	| anIndexStyler |
-	self properties ifNil: [ ^ aView empty ].
+	self everything ifNil: [ ^ aView empty ].
 
 	anIndexStyler := aContext at: #gtTreeExpansionLevel ifAbsentPut: [ true ].
 
 	^ aView forward
+		title: 'Structure';
+		priority: 40;
+		object: [ self everything ];
+		view: #gtTreeFor:context:
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiSchema >> gtPropertiesFor: aView context: aContext [
+	<gtView>
+	| anIndexStyler |
+	self everything ifNil: [ ^ aView empty ].
+
+	anIndexStyler := aContext at: #gtTreeExpansionLevel ifAbsentPut: [ true ].
+
+	^ aView columnedList
 		title: 'Properties';
 		priority: 1;
-		object: [ self properties ];
-		view: #gtTreeFor:context:
+		items: [ self properties associations ];
+		column: 'Name'
+			text: [ :anAssoc | 
+				| aName |
+				aName := anAssoc key.
+				self
+					ifProperty: aName
+					requiredDo: [ aName asRopedText bold
+							append: (' (required)' asRopedText foreground: BrGlamorousColors disabledButtonTextColor) ]
+					otherwise: [ aName ] ];
+		column: 'Type' text: [ :anAssoc | anAssoc value gtPropertiesViewTypeString ];
+		send: #value
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiSchema >> gtPropertiesViewTypeString [
+	^ self type ifNil: [ '' ]
+]
+
+{ #category : #testing }
+GtOpenApiSchema >> ifProperty: aPropertyName requiredDo: aRequiredBlock otherwise: anOtherwiseBlock [
+	^ (self isPropertyRequired: aPropertyName)
+		ifTrue: aRequiredBlock
+		ifFalse: anOtherwiseBlock
+]
+
+{ #category : #initiailize }
+GtOpenApiSchema >> initialize [
+	super initialize.
+
+	everything := OrderedDictionary new
+]
+
+{ #category : #testing }
+GtOpenApiSchema >> isPropertyRequired: aPropertyName [
+	^ self required includes: aPropertyName
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> items: aValue [
+	everything at: #items put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> maxItems: aValue [
+	everything at: #maxItems put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> maxLength: aValue [
+	everything at: #maxLength put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> maxProperties: aValue [
+	everything at: #maxProperties put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> maximum: aValue [
+	everything at: #maximum put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> minItems: aValue [
+	everything at: #minItems put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> minLength: aValue [
+	everything at: #minLength put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> minProperties: aValue [
+	everything at: #minProperties put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> minimum: aValue [
+	everything at: #minimum put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> multipleOf: aValue [
+	everything at: #multipleOf put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> not: aValue [
+	everything at: #not put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> oneOf: aValue [
+	everything at: #oneOf put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> pattern: aValue [
+	everything at: #pattern put: aValue
 ]
 
 { #category : #accessing }
 GtOpenApiSchema >> properties [
-
-	^ properties
+	^ everything at: #properties ifAbsent: [ OrderedDictionary new ]
 ]
 
 { #category : #accessing }
-GtOpenApiSchema >> properties: anObject [
+GtOpenApiSchema >> properties: aValue [
+	everything at: #properties put: aValue
+]
 
-	properties := anObject
+{ #category : #accessing }
+GtOpenApiSchema >> required [
+	^ everything at: #required ifAbsent: [ #() ]
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> required: aValue [
+	everything at: #required put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> title: aValue [
+	everything at: #title put: aValue
 ]
 
 { #category : #accessing }
 GtOpenApiSchema >> type [
-
-	^ type
+	^ everything at: #type ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
-GtOpenApiSchema >> type: anObject [
+GtOpenApiSchema >> type: aValue [
+	everything at: #type put: aValue
+]
 
-	type := anObject
+{ #category : #accessing }
+GtOpenApiSchema >> uniqueItems: aValue [
+	everything at: #uniqueItems put: aValue
 ]

@@ -39,7 +39,8 @@ GtOpenApiParser >> initializeMappingsFor: aMapper [
 	self mappingOfOpenApiTagFor: aMapper.
 	self mappingOfCollectionOf: GtOpenApiTag for: aMapper.
 	self mappingOfOpenApiComponentsFor: aMapper.
-	self mappingOfDictionaryOf: GtOpenApiSchema for: aMapper.
+	self mappingOfDictionaryOfReferenceOr: GtOpenApiSchema for: aMapper.
+	self mappingOfReferenceOr: GtOpenApiSchema for: aMapper.
 	self mappingOfOpenApiSchemaFor: aMapper
 ]
 
@@ -73,7 +74,7 @@ GtOpenApiParser >> mappingOfOpenApiComponentsFor: aMapper [
 		for: GtOpenApiComponents
 		do: [ :mapping | 
 			(mapping mapAccessor: #schemas)
-				valueSchema: (self nameOfDictionary: GtOpenApiSchema).
+				valueSchema: (self nameOfDictionaryOfReferenceOr: GtOpenApiSchema).
 			mapping mapAccessor: #responses.
 			mapping mapAccessor: #parameters.
 			mapping mapAccessor: #examples.
@@ -243,8 +244,45 @@ GtOpenApiParser >> mappingOfOpenApiSchemaFor: aMapper [
 	aMapper
 		for: GtOpenApiSchema
 		do: [ :mapping | 
+			mapping mapAccessor: #title.
+			mapping mapAccessor: #multipleOf.
+			mapping mapAccessor: #maximum.
+			mapping mapAccessor: #exclusiveMaximum.
+			mapping mapAccessor: #minimum.
+			mapping mapAccessor: #exclusiveMinimum.
+			mapping mapAccessor: #maxLength.
+			mapping mapAccessor: #minLength.
+			mapping mapAccessor: #pattern.
+			mapping mapAccessor: #maxItems.
+			mapping mapAccessor: #minItems.
+			mapping mapAccessor: #uniqueItems.
+			mapping mapAccessor: #maxProperties.
+			mapping mapAccessor: #minProperties.
+			mapping mapAccessor: #required.
+			mapping mapAccessor: #enum.
+
 			mapping mapAccessor: #type.
-			mapping mapAccessor: #properties ]
+			mapping mapAccessor: #allOf.
+			mapping mapAccessor: #oneOf.
+			mapping mapAccessor: #anyOf.
+			mapping mapAccessor: #not.
+			mapping mapAccessor: #items.
+			(mapping mapAccessor: #properties)
+				valueSchema: (self nameOfDictionaryOfReferenceOr: GtOpenApiSchema).
+			mapping mapAccessor: #additionalProperties.
+			mapping mapAccessor: #description.
+			mapping mapAccessor: #format.
+			mapping mapAccessor: #default.
+
+			mapping mapAccessor: #nullable.
+			mapping mapAccessor: #discrimintaro.
+			mapping mapAccessor: #readOnly.
+			mapping mapAccessor: #writeOnly.
+			mapping mapAccessor: #xml.
+			(mapping mapAccessor: #externalDocs)
+				valueSchema: GtOpenApiExternalDocumentation.
+			mapping mapAccessor: #example.
+			mapping mapAccessor: #isDeprecated to: #deprecated ]
 ]
 
 { #category : #initialization }
@@ -325,6 +363,7 @@ GtOpenApiParser >> nameOfReferenceOr: aSchemaName [
 GtOpenApiParser >> read: aJsonSchema stream: aReadStream [
 	| aReader |
 	aReader := NeoJSONReader on: aReadStream.
+	aReader mapClass: OrderedDictionary.
 	self initializeMappingsFor: aReader.
 	^ aReader nextAs: aJsonSchema
 ]
