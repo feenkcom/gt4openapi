@@ -69,16 +69,24 @@ GtOpenApiSchema >> format: aValue [
 { #category : #'gt - extensions' }
 GtOpenApiSchema >> gtEverythingFor: aView context: aContext [
 	<gtView>
-	| anIndexStyler |
 	self everything ifNil: [ ^ aView empty ].
 
-	anIndexStyler := aContext at: #gtTreeExpansionLevel ifAbsentPut: [ true ].
+	aContext at: #gtTreeExpansionLevel ifAbsentPut: [ true ].
+
+	aContext
+		at: #gtTreeValueStyler
+		ifAbsentPut: [ [ :aNode | aNode value gtOpenApiStructureViewText ] ].
 
 	^ aView forward
 		title: 'Structure';
 		priority: 40;
 		object: [ self everything ];
 		view: #gtTreeFor:context:
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> gtOpenApiStructureViewText [
+	^ self name ifNil: [ self type ifNil: [ self ] ]
 ]
 
 { #category : #'gt - extensions' }

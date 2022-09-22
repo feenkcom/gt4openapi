@@ -44,6 +44,8 @@ GtOpenApiResponse >> description: anObject [
 { #category : #accessing }
 GtOpenApiResponse >> gtContentFor: aView context: aContext [
 	<gtView>
+	self content ifNil: [ ^ aView empty ].
+
 	aContext at: #gtTreeExpansionLevel ifAbsentPut: [ true ].
 
 	^ aView forward

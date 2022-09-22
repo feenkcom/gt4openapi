@@ -50,7 +50,8 @@ GtOpenApiResponses >> gtDictionaryFor: aView [
 		column: 'Code'
 			text: [ :anAssoc | anAssoc key ]
 			width: 100;
-		column: 'Description' text: [ :anAssoc | anAssoc value description ];
+		column: 'Description'
+			text: [ :anAssoc | anAssoc value description ifNil: [ '' ] ];
 		send: #value
 ]
 
