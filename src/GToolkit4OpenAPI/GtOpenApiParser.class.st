@@ -154,7 +154,8 @@ GtOpenApiParser >> mappingOfOpenApiOperationFor: aMapper [
 			(mapping mapAccessor: #externalDocs)
 				valueSchema: GtOpenApiExternalDocumentation.
 			mapping mapAccessor: #operationId.
-			mapping mapAccessor: #parameters.	"valueSchema: #CollectionOfOpenApiParameters"
+			(mapping mapAccessor: #parameters)
+				valueSchema: (self nameOfCollectionOfReferenceOr: GtOpenApiParameter).
 			mapping mapAccessor: #requestBody.	"valueSchema: #OpenApiRequestBodyOrReference"
 			(mapping mapAccessor: #responses) valueSchema: GtOpenApiResponses.
 			mapping mapAccessor: #callbacks.	"valueSchema: #CollectionOfGtOpenApiCallaback"
@@ -219,7 +220,8 @@ GtOpenApiParser >> mappingOfOpenApiResponseFor: aMapper [
 		for: GtOpenApiResponse
 		do: [ :mapping | 
 			mapping mapAccessor: #description.
-			mapping mapAccessor: #headers.
+			(mapping mapAccessor: #headers)
+				valueSchema: (self nameOfDictionaryOfReferenceOr: GtOpenApiHeader).
 			mapping mapAccessor: #content.
 			mapping mapAccessor: #links ]
 ]

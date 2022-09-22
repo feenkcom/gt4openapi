@@ -1,3 +1,9 @@
+"
+I represent an OpenAPI object.
+I am model of 3.0.3 version.
+I am based on the following [specification](https://swagger.io/specification/).
+
+"
 Class {
 	#name : #GtOpenApi,
 	#superclass : #Object,

@@ -44,6 +44,25 @@ GtOpenApiParameter >> description: anObject [
 ]
 
 { #category : #accessing }
+GtOpenApiParameter >> gtParameterViewNameText [
+	| aText |
+	aText := self name asRopedText.
+
+	self isRequired
+		ifTrue: [ aText bold
+				append: (' (required)' asRopedText foreground: BrGlamorousColors disabledButtonTextColor) ].
+
+	self isDeprecated
+		ifTrue: [ aText
+				lineThroughDo: [ :anAttribute |  ];
+				italic;
+				append: (' (deprecated)' asRopedText
+						foreground: BrGlamorousColors disabledButtonTextColor) ].
+
+	^ aText
+]
+
+{ #category : #accessing }
 GtOpenApiParameter >> gtParametersViewStatusText [
 	| aText |
 	aText := '' asRopedText.

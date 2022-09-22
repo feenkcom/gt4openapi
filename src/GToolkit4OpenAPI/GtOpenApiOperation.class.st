@@ -79,8 +79,18 @@ GtOpenApiOperation >> gtOperationViewDescriptionText [
 ]
 
 { #category : #'gt - extensions' }
-GtOpenApiOperation >> gtOperationViewStateText [
-	^ self isDeprecated ifTrue: [ 'deprecated' ] ifFalse: [ '' ]
+GtOpenApiOperation >> gtParametersFor: aView [
+	<gtView>
+	self parameters ifNil: [ ^ aView empty ].
+
+	^ aView columnedList
+		title: 'Parameters';
+		priority: 3;
+		items: [ self parameters ];
+		column: 'Name' text: [ :aParameter | aParameter gtParameterViewNameText ];
+		column: 'Location' text: #inLocation;
+		column: 'Description'
+			text: [ :aParameter | aParameter description ifNil: [ '' ] ]
 ]
 
 { #category : #'gt - extensions' }
@@ -90,9 +100,20 @@ GtOpenApiOperation >> gtResponsesFor: aView [
 
 	^ aView forward
 		title: 'Responses';
-		priority: 2;
+		priority: 5;
 		object: [ self responses ];
 		view: #gtDictionaryFor:
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiOperation >> gtTagsFor: aView [
+	<gtView>
+	self tags ifNil: [ ^ aView empty ].
+
+	^ aView list
+		title: 'Tags';
+		priority: 10;
+		items: [ self tags ]
 ]
 
 { #category : #accessing }

@@ -86,5 +86,11 @@ GtOpenApiResponse >> objectsDo: aBlock [
 	aParameterName is a key value in case of dictionaries, 
 	e.g., Map[string, Callback Object | Reference Object]."
 
-	self flag: #todo.
+	self headers
+		ifNotNil: [ :aDict | 
+			aDict
+				keysAndValuesDo: [ :aName :aHeader | 
+					aBlock cull: aHeader cull: aName.
+					aHeader objectsDo: aBlock ] ].
+	self flag: #todo
 ]

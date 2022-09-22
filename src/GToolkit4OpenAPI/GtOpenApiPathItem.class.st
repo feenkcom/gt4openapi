@@ -69,12 +69,22 @@ GtOpenApiPathItem >> gtOperationsFor: aView [
 		title: 'Operations';
 		priority: 1;
 		items: [ self operations associations ];
-		column: 'Operation' text: [ :anAssoc | anAssoc key ] width: 80;
+		column: 'Operation'
+			text: [ :anAssoc | 
+				| aName |
+				aName := anAssoc key asRopedText.
+				anAssoc value isDeprecated
+					ifTrue: [ aName
+							lineThroughDo: [ :anAttribute |  ];
+							italic;
+							append: (' (deprecated)' asRopedText
+									foreground: BrGlamorousColors disabledButtonTextColor) ].
+				aName ]
+			width: 110;
 		column: 'ID' text: [ :anAssoc | anAssoc value operationId ];
 		column: 'Description'
 			text: [ :anAssoc | anAssoc value gtOperationViewDescriptionText ]
 			weight: 2;
-		column: 'State' text: [ :anAssoc | anAssoc value gtOperationViewStateText ];
 		send: #value
 ]
 
