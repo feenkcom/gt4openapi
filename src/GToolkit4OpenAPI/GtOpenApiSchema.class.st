@@ -81,12 +81,26 @@ GtOpenApiSchema >> gtEverythingFor: aView context: aContext [
 	aContext
 		at: #gtTreeValueStyler
 		ifAbsentPut: [ [ :aNode | aNode value gtOpenApiStructureViewText ] ].
+		
+	aContext
+		at: #gtTreeSend
+		ifAbsentPut: [ [ :aNode | aNode value gtOpenApiViewSendObject ] ].
 
 	^ aView forward
 		title: 'Structure';
 		priority: 40;
 		object: [ self everything ];
 		view: #gtTreeFor:context:
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> gtOpenApiContentViewResponseItemText [
+	^ self name ifNil: [ self type ifNil: [ self ] ]
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> gtOpenApiParameterViewText [
+	^ self name ifNil: [ self type ifNil: [ self ] ]
 ]
 
 { #category : #accessing }
@@ -152,6 +166,16 @@ GtOpenApiSchema >> initialize [
 { #category : #testing }
 GtOpenApiSchema >> isPropertyRequired: aPropertyName [
 	^ self required includes: aPropertyName
+]
+
+{ #category : #testing }
+GtOpenApiSchema >> isSchema [
+	^ true
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> items [
+	^ everything at: #items ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
@@ -231,7 +255,9 @@ GtOpenApiSchema >> objectsDo: aBlock [
 	self properties
 		keysAndValuesDo: [ :aName :anObject | 
 			aBlock cull: anObject cull: aName.
-			anObject objectsDo: aBlock ]
+			anObject objectsDo: aBlock ].
+
+	self items ifNotNil: [ :anObject | anObject withObjectsDo: aBlock ]
 ]
 
 { #category : #accessing }

@@ -15,6 +15,32 @@ GtOpenApiParser class >> readString: aString [
 ]
 
 { #category : #initialization }
+GtOpenApiParser >> configureOpenApiParameterMapping: mapping [
+	mapping mapOpenApiField: #description.
+	mapping mapOpenApiField: #isRequired to: #required.
+	mapping mapOpenApiField: #isDeprecated to: #deprecated.
+	mapping mapOpenApiField: #allowEmptyValue.
+
+	mapping mapOpenApiField: #style.
+	mapping mapOpenApiField: #explode.
+	mapping mapOpenApiField: #allowReserved.
+	(mapping mapOpenApiField: #schema)
+		valueSchema: (self nameOfReferenceOr: GtOpenApiSchema).
+	mapping mapOpenApiField: #example.
+	mapping mapOpenApiField: #examples.
+
+	mapping mapOpenApiField: #content.
+
+	mapping mapOpenApiField: #matrix.
+	mapping mapOpenApiField: #label.
+	mapping mapOpenApiField: #form.
+	mapping mapOpenApiField: #simple.
+	mapping mapOpenApiField: #spaceDelimited.
+	mapping mapOpenApiField: #pipeDelimited.
+	^ mapping mapOpenApiField: #deepObject
+]
+
+{ #category : #initialization }
 GtOpenApiParser >> initializeMappingsFor: aMapper [
 	self mappingOfOpenApiFor: aMapper.
 	self mappingOfOpenApiInfoFor: aMapper.
@@ -41,7 +67,13 @@ GtOpenApiParser >> initializeMappingsFor: aMapper [
 	self mappingOfOpenApiComponentsFor: aMapper.
 	self mappingOfDictionaryOfReferenceOr: GtOpenApiSchema for: aMapper.
 	self mappingOfReferenceOr: GtOpenApiSchema for: aMapper.
-	self mappingOfOpenApiSchemaFor: aMapper
+	self mappingOfOpenApiSchemaFor: aMapper.
+	self mappingOfOpenApiMediaTypeFor: aMapper.
+	self mappingOfDictionaryOf: GtOpenApiMediaType for: aMapper.
+	self mappingOfDictionaryOfReferenceOr: GtOpenApiHeader for: aMapper.
+	self mappingOfDictionaryOfReferenceOr: GtOpenApiLink for: aMapper.
+	self mappingOfOpenApiLinkFor: aMapper.
+	self mappingOfReferenceOr: GtOpenApiLink for: aMapper
 ]
 
 { #category : #'mapping - utilities' }
@@ -122,6 +154,13 @@ GtOpenApiParser >> mappingOfOpenApiFor: aMapper [
 ]
 
 { #category : #initialization }
+GtOpenApiParser >> mappingOfOpenApiHeaderFor: aMapper [
+	aMapper
+		for: GtOpenApiHeader
+		do: [ :mapping | self configureOpenApiParameterMapping: mapping ]
+]
+
+{ #category : #initialization }
 GtOpenApiParser >> mappingOfOpenApiInfoFor: aMapper [
 	aMapper
 		for: GtOpenApiInfo
@@ -141,6 +180,31 @@ GtOpenApiParser >> mappingOfOpenApiLicenseFor: aMapper [
 		do: [ :mapping | 
 			mapping mapAccessor: #name.
 			mapping mapAccessor: #url ]
+]
+
+{ #category : #initialization }
+GtOpenApiParser >> mappingOfOpenApiLinkFor: aMapper [
+	aMapper
+		for: GtOpenApiLink
+		do: [ :mapping | 
+			mapping mapOpenApiField: #operationRef.
+			mapping mapOpenApiField: #operationId.
+			mapping mapOpenApiField: #parameters.
+			mapping mapOpenApiField: #requestBody.
+			mapping mapOpenApiField: #description.
+			(mapping mapOpenApiField: #server) valueSchema: GtOpenApiServer ]
+]
+
+{ #category : #initialization }
+GtOpenApiParser >> mappingOfOpenApiMediaTypeFor: aMapper [
+	aMapper
+		for: GtOpenApiMediaType
+		do: [ :mapping | 
+			(mapping mapOpenApiField: #schema)
+				valueSchema: (self nameOfReferenceOr: GtOpenApiSchema).
+			mapping mapOpenApiField: #example.
+			mapping mapOpenApiField: #examples.
+			mapping mapOpenApiField: #encoding ]
 ]
 
 { #category : #initialization }
@@ -170,12 +234,9 @@ GtOpenApiParser >> mappingOfOpenApiParameterFor: aMapper [
 	aMapper
 		for: GtOpenApiParameter
 		do: [ :mapping | 
-			mapping mapAccessor: #name.
-			(mapping mapAccessor: #inLocation to: #in).
-			mapping mapAccessor: #description.
-			mapping mapAccessor: #isRequired to: #required.
-			mapping mapAccessor: #isDeprecated to: #deprecated.
-			mapping mapAccessor: #allowEmptyValue ]
+			mapping mapOpenApiField: #name.
+			mapping mapOpenApiField: #inLocation to: #in.
+			self configureOpenApiParameterMapping: mapping ]
 ]
 
 { #category : #initialization }
@@ -219,11 +280,13 @@ GtOpenApiParser >> mappingOfOpenApiResponseFor: aMapper [
 	aMapper
 		for: GtOpenApiResponse
 		do: [ :mapping | 
-			mapping mapAccessor: #description.
-			(mapping mapAccessor: #headers)
+			mapping mapOpenApiField: #description.
+			(mapping mapOpenApiField: #headers)
 				valueSchema: (self nameOfDictionaryOfReferenceOr: GtOpenApiHeader).
-			mapping mapAccessor: #content.
-			mapping mapAccessor: #links ]
+			(mapping mapOpenApiField: #content)
+				valueSchema: (self nameOfDictionary: GtOpenApiMediaType).
+			(mapping mapOpenApiField: #links)
+				valueSchema: (self nameOfDictionaryOfReferenceOr: GtOpenApiLink) ]
 ]
 
 { #category : #initialization }
@@ -268,7 +331,8 @@ GtOpenApiParser >> mappingOfOpenApiSchemaFor: aMapper [
 			mapping mapAccessor: #oneOf.
 			mapping mapAccessor: #anyOf.
 			mapping mapAccessor: #not.
-			mapping mapAccessor: #items.
+			(mapping mapAccessor: #items)
+				valueSchema: (self nameOfReferenceOr: GtOpenApiSchema).
 			(mapping mapAccessor: #properties)
 				valueSchema: (self nameOfDictionaryOfReferenceOr: GtOpenApiSchema).
 			mapping mapAccessor: #additionalProperties.
@@ -338,27 +402,27 @@ GtOpenApiParser >> mappingOfReferenceOr: aSchemeName for: aMapper [
 
 { #category : #'mapping - utilities' }
 GtOpenApiParser >> nameOfCollection: aSchemaName [
-	^ #CollectionOf , aSchemaName asString
+	^ GtOpenApiMappingUtility nameOfCollection: aSchemaName
 ]
 
 { #category : #'mapping - utilities' }
 GtOpenApiParser >> nameOfCollectionOfReferenceOr: aSchemaName [
-	^ self nameOfCollection: (self nameOfReferenceOr: aSchemaName)
+	^ GtOpenApiMappingUtility nameOfCollectionOfReferenceOr: aSchemaName
 ]
 
 { #category : #'mapping - utilities' }
 GtOpenApiParser >> nameOfDictionary: aSchemaName [
-	^ #DictionaryOf , aSchemaName asString
+	^ GtOpenApiMappingUtility nameOfDictionary: aSchemaName
 ]
 
 { #category : #'mapping - utilities' }
 GtOpenApiParser >> nameOfDictionaryOfReferenceOr: aSchemaName [
-	^ self nameOfDictionary: (self nameOfReferenceOr: aSchemaName)
+	^ GtOpenApiMappingUtility nameOfDictionaryOfReferenceOr: aSchemaName
 ]
 
 { #category : #'mapping - utilities' }
 GtOpenApiParser >> nameOfReferenceOr: aSchemaName [
-	^ GtOpenApiReference name , 'Or' , aSchemaName asString
+	^ GtOpenApiMappingUtility nameOfReferenceOr: aSchemaName
 ]
 
 { #category : #'api - reading' }

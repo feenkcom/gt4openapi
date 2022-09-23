@@ -1,46 +1,14 @@
 Class {
 	#name : #GtOpenApiParameter,
 	#superclass : #Object,
-	#traits : 'TGtOpenApiObject',
-	#classTraits : 'TGtOpenApiObject classTrait',
-	#instVars : [
-		'name',
-		'description',
-		'isRequired',
-		'isDeprecated',
-		'allowEmptyValue',
-		'inLocation'
-	],
+	#traits : 'TGtOpenApiObject + TGtOpenApiWithFields',
+	#classTraits : 'TGtOpenApiObject classTrait + TGtOpenApiWithFields classTrait',
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
 
 { #category : #visiting }
 GtOpenApiParameter >> accept: aVisitor [
 	^ aVisitor visitGtOpenApiParameter: self
-]
-
-{ #category : #accessing }
-GtOpenApiParameter >> allowEmptyValue [
-
-	^ allowEmptyValue
-]
-
-{ #category : #accessing }
-GtOpenApiParameter >> allowEmptyValue: anObject [
-
-	allowEmptyValue := anObject
-]
-
-{ #category : #accessing }
-GtOpenApiParameter >> description [
-
-	^ description
-]
-
-{ #category : #accessing }
-GtOpenApiParameter >> description: anObject [
-
-	description := anObject
 ]
 
 { #category : #accessing }
@@ -79,47 +47,27 @@ GtOpenApiParameter >> gtParametersViewStatusText [
 ]
 
 { #category : #accessing }
-GtOpenApiParameter >> inLocation [
-
-	^ inLocation
-]
-
-{ #category : #accessing }
-GtOpenApiParameter >> inLocation: anObject [
-
-	inLocation := anObject
-]
-
-{ #category : #accessing }
 GtOpenApiParameter >> isDeprecated [
-	^ isDeprecated ifNil: [ false ]
-]
-
-{ #category : #accessing }
-GtOpenApiParameter >> isDeprecated: anObject [
-
-	isDeprecated := anObject
+	^ self fieldAt: #isDeprecated ifAbsent: [ false ]
 ]
 
 { #category : #accessing }
 GtOpenApiParameter >> isRequired [
-	^ isRequired ifNil: [ false ]
+	^ self fieldAt: #isRequired ifAbsent: [ false ]
+]
+
+{ #category : #enumerating }
+GtOpenApiParameter >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
+
+	self schema ifNotNil: [ :aSchema | aSchema withObjectsDo: aBlock ].
+	self flag: #todo
 ]
 
 { #category : #accessing }
-GtOpenApiParameter >> isRequired: anObject [
-
-	isRequired := anObject
-]
-
-{ #category : #accessing }
-GtOpenApiParameter >> name [
-
-	^ name
-]
-
-{ #category : #accessing }
-GtOpenApiParameter >> name: anObject [
-
-	name := anObject
+GtOpenApiParameter >> schema [
+	^ self fieldAt: #schema
 ]

@@ -74,6 +74,22 @@ GtOpenApiOperation >> gtDescriptionFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtOpenApiOperation >> gtOpenApiPathsViewChildren [
+	^ self responses
+		ifNotNil: [ :aResponses | 
+			aResponses dictionary associations
+				collect: [ :anAssoc | 
+					('response' asRopedText
+						italic;
+						foreground: BrGlamorousColors disabledButtonTextColor)
+						-> (GtOpenApiViewObject new
+								name: anAssoc key;
+								description: anAssoc value gtPathsViewDescriptionText;
+								object: anAssoc value) ] ]
+		ifNil: [ #() ]
+]
+
+{ #category : #'gt - extensions' }
 GtOpenApiOperation >> gtOperationViewDescriptionText [
 	^ self description ifNil: [ '' ]
 ]
@@ -81,7 +97,7 @@ GtOpenApiOperation >> gtOperationViewDescriptionText [
 { #category : #'gt - extensions' }
 GtOpenApiOperation >> gtParametersFor: aView [
 	<gtView>
-	self parameters ifNil: [ ^ aView empty ].
+	self parameters ifEmpty: [ ^ aView empty ].
 
 	^ aView columnedList
 		title: 'Parameters';
@@ -91,6 +107,16 @@ GtOpenApiOperation >> gtParametersFor: aView [
 		column: 'Location' text: #inLocation;
 		column: 'Description'
 			text: [ :aParameter | aParameter description ifNil: [ '' ] ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiOperation >> gtPathsViewDescriptionText [
+	^ self description ifNil: [ '' ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiOperation >> gtPathsViewOperationsText [
+	^ self operationId ifNil: [ '' ]
 ]
 
 { #category : #'gt - extensions' }
@@ -153,8 +179,7 @@ GtOpenApiOperation >> operationId: anObject [
 
 { #category : #accessing }
 GtOpenApiOperation >> parameters [
-
-	^ parameters
+	^ parameters ifNil: [ #() ]
 ]
 
 { #category : #accessing }
@@ -189,7 +214,6 @@ GtOpenApiOperation >> requestBody: anObject [
 
 { #category : #accessing }
 GtOpenApiOperation >> responses [
-
 	^ responses
 ]
 

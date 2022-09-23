@@ -97,6 +97,65 @@ GtOpenApiExamples >> openApi301Object [
 ]
 
 { #category : #accessing }
+GtOpenApiExamples >> openApiMediaTypeJsonString [
+	<gtExample>
+	^ '{
+  "application/json": {
+    "schema": {
+         "$ref": "#/components/schemas/Pet"
+    },
+    "examples": {
+      "cat" : {
+        "summary": "An example of a cat",
+        "value": 
+          {
+            "name": "Fluffy",
+            "petType": "Cat",
+            "color": "White",
+            "gender": "male",
+            "breed": "Persian"
+          }
+      },
+      "dog": {
+        "summary": "An example of a dog with a cat''s name",
+        "value" :  { 
+          "name": "Puma",
+          "petType": "Dog",
+          "color": "Black",
+          "gender": "Female",
+          "breed": "Mixed"
+        },
+      "frog": {
+          "$ref": "#/components/examples/frog-example"
+        }
+      }
+    }
+  }
+}'
+]
+
+{ #category : #accessing }
+GtOpenApiExamples >> openApiMediaTypeObject [
+	<gtExample>
+	| aDictionary aMediaType |
+	aDictionary := self parser
+			read: (GtOpenApiMappingUtility nameOfDictionary: GtOpenApiMediaType)
+			string: self openApiMediaTypeJsonString.
+
+	self assert: aDictionary isNotNil.
+	self assert: (aDictionary includesKey: 'application/json').
+	self assert: (aMediaType := aDictionary at: 'application/json') isNotNil.
+
+	self assert: aMediaType isNotNil.
+	self assert: aMediaType schema isNotNil.
+	self assert: aMediaType schema isReference.
+	self assert: aMediaType schema ref equals: '#/components/schemas/Pet'.
+	self assert: aMediaType examples size equals: 2.
+
+	^ aDictionary
+]
+
+{ #category : #accessing }
 GtOpenApiExamples >> openApiPathItemJsonString [
 	<gtExample>
 	^ '{

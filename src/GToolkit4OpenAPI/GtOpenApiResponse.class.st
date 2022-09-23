@@ -1,14 +1,8 @@
 Class {
 	#name : #GtOpenApiResponse,
 	#superclass : #Object,
-	#traits : 'TGtOpenApiObject',
-	#classTraits : 'TGtOpenApiObject classTrait',
-	#instVars : [
-		'description',
-		'headers',
-		'content',
-		'links'
-	],
+	#traits : 'TGtOpenApiObject + TGtOpenApiWithFields',
+	#classTraits : 'TGtOpenApiObject classTrait + TGtOpenApiWithFields classTrait',
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
 
@@ -18,65 +12,48 @@ GtOpenApiResponse >> accept: aVisitor [
 ]
 
 { #category : #accessing }
-GtOpenApiResponse >> content [
-
-	^ content
-]
-
-{ #category : #accessing }
-GtOpenApiResponse >> content: anObject [
-
-	content := anObject
-]
-
-{ #category : #accessing }
-GtOpenApiResponse >> description [
-
-	^ description
-]
-
-{ #category : #accessing }
-GtOpenApiResponse >> description: anObject [
-
-	description := anObject
-]
-
-{ #category : #accessing }
 GtOpenApiResponse >> gtContentFor: aView context: aContext [
 	<gtView>
 	self content ifNil: [ ^ aView empty ].
 
 	aContext at: #gtTreeExpansionLevel ifAbsentPut: [ true ].
 
+	aContext
+		at: #gtTreeValueStyler
+		ifAbsentPut: [ [ :aNode | aNode value gtOpenApiContentViewResponseItemText ] ].
+
 	^ aView forward
 		title: 'Content';
-		priority: 1;
+		priority: 2;
 		object: [ self content ];
 		view: #gtTreeFor:context:
 ]
 
-{ #category : #accessing }
-GtOpenApiResponse >> headers [
+{ #category : #'gt - extensions' }
+GtOpenApiResponse >> gtDescriptionFor: aView [
+	<gtView>
+	self description ifNil: [ ^ aView empty ].
 
-	^ headers
+	^ aView textEditor
+		title: 'Description';
+		priority: 1;
+		aptitude: BrGlamorousRegularEditorAptitude;
+		text: [ self description ]
 ]
 
-{ #category : #accessing }
-GtOpenApiResponse >> headers: anObject [
-
-	headers := anObject
+{ #category : #'gt - extensions' }
+GtOpenApiResponse >> gtOpenApiPathsViewChildren [
+	^ #()
 ]
 
-{ #category : #accessing }
-GtOpenApiResponse >> links [
-
-	^ links
+{ #category : #'gt - extensions' }
+GtOpenApiResponse >> gtPathsViewDescriptionText [
+	^ self description ifNil: [ '' ]
 ]
 
-{ #category : #accessing }
-GtOpenApiResponse >> links: anObject [
-
-	links := anObject
+{ #category : #'gt - extensions' }
+GtOpenApiResponse >> gtPathsViewOperationsText [
+	^ ''
 ]
 
 { #category : #enumerating }
@@ -92,5 +69,20 @@ GtOpenApiResponse >> objectsDo: aBlock [
 				keysAndValuesDo: [ :aName :aHeader | 
 					aBlock cull: aHeader cull: aName.
 					aHeader objectsDo: aBlock ] ].
+
+	self content
+		ifNotNil: [ :aDict | 
+			aDict
+				keysAndValuesDo: [ :aName :aMediaType | 
+					aBlock cull: aMediaType cull: aName.
+					aMediaType objectsDo: aBlock ] ].
+
+	self links
+		ifNotNil: [ :aDict | 
+			aDict
+				keysAndValuesDo: [ :aName :aLink | 
+					aBlock cull: aLink cull: aName.
+					aLink objectsDo: aBlock ] ].
+
 	self flag: #todo
 ]

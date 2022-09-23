@@ -73,16 +73,17 @@ GtOpenApi >> gtPathsFor: aView [
 	<gtView>
 	self paths ifNil: [ ^ aView empty ].
 
-	^ aView columnedList
+	^ aView columnedTree
 		title: 'Paths';
 		priority: 5;
 		items: [ self paths associations sorted: [ :a :b | a key < b key ] ];
+		children: [ :anAssoc | anAssoc value gtOpenApiPathsViewChildren ];
 		column: 'End Point' text: #key;
 		column: 'Operations'
 			text: [ :anAssoc | anAssoc value gtPathsViewOperationsText ];
 		column: 'Description'
 			text: [ :anAssoc | anAssoc value gtPathsViewDescriptionText ];
-		send: #value
+		send: [ :anAssoc | anAssoc value gtPathsViewSendObject ]
 ]
 
 { #category : #'gt - extensions' }

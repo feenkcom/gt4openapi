@@ -20,6 +20,11 @@ GtOpenApiResponses >> atCode: aCode [
 	^ self dictionary at: aCode asString ifAbsent: [ nil ]
 ]
 
+{ #category : #enumerating }
+GtOpenApiResponses >> collect: aBlock [
+	^ self dictionary collect: aBlock
+]
+
 { #category : #accessing }
 GtOpenApiResponses >> default [
 	self dictionary ifNil: [ ^ nil ].

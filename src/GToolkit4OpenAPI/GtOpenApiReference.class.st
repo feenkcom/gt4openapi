@@ -37,6 +37,32 @@ GtOpenApiReference >> gtDisplayOn: aStream [
 ]
 
 { #category : #'gt - extensions' }
+GtOpenApiReference >> gtOpenApiContentViewResponseItemText [
+	^ (self object isNotNil and: [ self object name isNotNil ])
+		ifTrue: [ self object name ]
+		ifFalse: [ self ref ifNil: [ 'reference' ] ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiReference >> gtOpenApiParameterViewText [
+	^ (self object isNotNil and: [ self object name isNotNil ])
+		ifTrue: [ self object name ]
+		ifFalse: [ self ref ifNil: [ 'reference' ] ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiReference >> gtOpenApiStructureViewText [
+	^ (self object isNotNil and: [ self object name isNotNil ])
+		ifTrue: [ self object name ]
+		ifFalse: [ self ref ifNil: [ 'reference' ] ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiReference >> gtOpenApiViewSendObject [
+	^ self object ifNotNil: #gtOpenApiViewSendObject ifNil: [ self ]
+]
+
+{ #category : #'gt - extensions' }
 GtOpenApiReference >> gtPropertiesViewChildren [
 	^ self object ifNil: [ #() ] ifNotNil: [ self object gtPropertiesViewChildren ]
 ]
@@ -46,6 +72,23 @@ GtOpenApiReference >> gtPropertiesViewTypeText [
 	^ (self object isNotNil and: [ self object name isNotNil ])
 		ifTrue: [ self object name ]
 		ifFalse: [ self ref ifNil: [ 'reference' ] ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiReference >> gtSchemaPropertiesFor: aView context: aContext [
+	<gtView>
+	self object ifNil: [ ^ aView empty ].
+	self object isSchema ifFalse: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Properties';
+		priority: 1;
+		object: [ self object ];
+		view: #gtPropertiesFor:context:;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Schema'
+			tooltip: 'Inspect schema'
+			action: [ :aButton | aButton phlow spawnObject: self object ]
 ]
 
 { #category : #testing }

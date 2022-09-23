@@ -63,6 +63,15 @@ GtOpenApiPathItem >> get: anObject [
 ]
 
 { #category : #'gt - extensions' }
+GtOpenApiPathItem >> gtOpenApiPathsViewChildren [
+	^ self operations
+		collect: [ :each | 
+			('operation' asRopedText
+				italic;
+				foreground: BrGlamorousColors disabledButtonTextColor) -> each ]
+]
+
+{ #category : #'gt - extensions' }
 GtOpenApiPathItem >> gtOperationsFor: aView [
 	<gtView>
 	^ aView columnedList
@@ -116,11 +125,21 @@ GtOpenApiPathItem >> gtPathsViewDescriptionText [
 
 { #category : #'gt - extensions' }
 GtOpenApiPathItem >> gtPathsViewOperationsText [
-	^ String
-		streamContents: [ :aStream | 
-			self operations keys
-				do: [ :aKey | aStream nextPutAll: aKey ]
-				separatedBy: [ aStream nextPutAll: ', ' ] ]
+	| aText allOperations |
+	aText := '' asRopedText.
+	allOperations := self operations.
+	allOperations keys
+		do: [ :aKey | 
+			| anOperation aParameterText |
+			aText append: aKey asRopedText.
+			anOperation := allOperations at: aKey.
+			anOperation parameters size isZero
+				ifFalse: [ aParameterText := (' (' , anOperation parameters size asString , ' param.)')
+							asRopedText foreground: BrGlamorousColors disabledButtonTextColor.
+					aText append: aParameterText ] ]
+		separatedBy: [ aText append: ', ' asRopedText ].
+
+	^ aText
 ]
 
 { #category : #accessing }

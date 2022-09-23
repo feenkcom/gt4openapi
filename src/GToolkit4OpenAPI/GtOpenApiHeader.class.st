@@ -1,14 +1,8 @@
 Class {
 	#name : #GtOpenApiHeader,
 	#superclass : #Object,
-	#traits : 'TGtOpenApiObject',
-	#classTraits : 'TGtOpenApiObject classTrait',
-	#instVars : [
-		'description',
-		'isRequired',
-		'isDeprecated',
-		'allowEmptyValue'
-	],
+	#traits : 'TGtOpenApiObject + TGtOpenApiWithFields',
+	#classTraits : 'TGtOpenApiObject classTrait + TGtOpenApiWithFields classTrait',
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
 
@@ -19,46 +13,26 @@ GtOpenApiHeader >> accept: aVisitor [
 
 { #category : #accessing }
 GtOpenApiHeader >> allowEmptyValue [
-
-	^ allowEmptyValue
-]
-
-{ #category : #accessing }
-GtOpenApiHeader >> allowEmptyValue: anObject [
-
-	allowEmptyValue := anObject
-]
-
-{ #category : #accessing }
-GtOpenApiHeader >> description [
-
-	^ description
-]
-
-{ #category : #accessing }
-GtOpenApiHeader >> description: anObject [
-
-	description := anObject
+	^ self fieldAt: #allowEmptyValue ifAbsent: [ false ]
 ]
 
 { #category : #accessing }
 GtOpenApiHeader >> isDeprecated [
-	^ isDeprecated ifNil: [ false ]
-]
-
-{ #category : #accessing }
-GtOpenApiHeader >> isDeprecated: anObject [
-
-	isDeprecated := anObject
+	^ self fieldAt: #isDeprecated ifAbsent: [ false ]
 ]
 
 { #category : #accessing }
 GtOpenApiHeader >> isRequired [
-	^ isRequired ifNil: [ false ]
+	^ self fieldAt: #isRequired ifAbsent: [ false ]
 ]
 
-{ #category : #accessing }
-GtOpenApiHeader >> isRequired: anObject [
+{ #category : #enumerating }
+GtOpenApiHeader >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
 
-	isRequired := anObject
+	self schema ifNotNil: [ :aSchema | aSchema withObjectsDo: aBlock ].
+	self flag: #todo
 ]

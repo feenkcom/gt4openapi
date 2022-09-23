@@ -24,11 +24,19 @@ TGtOpenApiObjectVisitor >> visitGtOpenApiExternalDocumentation: aJsonApiObject [
 ]
 
 { #category : #visiting }
+TGtOpenApiObjectVisitor >> visitGtOpenApiHeader: aJsonApiObject [
+]
+
+{ #category : #visiting }
 TGtOpenApiObjectVisitor >> visitGtOpenApiInfo: aJsonApiObject [
 ]
 
 { #category : #visiting }
 TGtOpenApiObjectVisitor >> visitGtOpenApiLicense: aJsonApiObject [
+]
+
+{ #category : #visiting }
+TGtOpenApiObjectVisitor >> visitGtOpenApiMediaType: aJsonApiObject [
 ]
 
 { #category : #visiting }

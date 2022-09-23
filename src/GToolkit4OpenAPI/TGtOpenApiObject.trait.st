@@ -8,6 +8,16 @@ TGtOpenApiObject >> accept: aVisitor [
 	self explicitRequirement
 ]
 
+{ #category : #'gt - extensions' }
+TGtOpenApiObject >> gtOpenApiViewSendObject [
+	^ self
+]
+
+{ #category : #'gt - extensions' }
+TGtOpenApiObject >> gtPathsViewSendObject [
+	^ self
+]
+
 { #category : #testing }
 TGtOpenApiObject >> isOpenApi [
 	^ false
@@ -15,6 +25,11 @@ TGtOpenApiObject >> isOpenApi [
 
 { #category : #testing }
 TGtOpenApiObject >> isReference [
+	^ false
+]
+
+{ #category : #testing }
+TGtOpenApiObject >> isSchema [
 	^ false
 ]
 
