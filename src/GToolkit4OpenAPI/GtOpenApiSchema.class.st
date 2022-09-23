@@ -62,6 +62,11 @@ GtOpenApiSchema >> exclusiveMinimum: aValue [
 ]
 
 { #category : #accessing }
+GtOpenApiSchema >> format [
+	^ everything at: #format ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
 GtOpenApiSchema >> format: aValue [
 	everything at: #format put: aValue
 ]
@@ -92,7 +97,6 @@ GtOpenApiSchema >> gtOpenApiStructureViewText [
 { #category : #'gt - extensions' }
 GtOpenApiSchema >> gtPropertiesFor: aView context: aContext [
 	<gtView>
-	| anIndexStyler |
 	self everything ifNil: [ ^ aView empty ].
 
 	^ aView columnedTree
@@ -109,7 +113,7 @@ GtOpenApiSchema >> gtPropertiesFor: aView context: aContext [
 					requiredDo: [ aName asRopedText bold
 							append: (' (required)' asRopedText foreground: BrGlamorousColors disabledButtonTextColor) ]
 					otherwise: [ aName ] ];
-		column: 'Type' text: [ :anAssoc | anAssoc value gtPropertiesViewTypeString ];
+		column: 'Type' text: [ :anAssoc | anAssoc value gtPropertiesViewTypeText ];
 		send: #value
 ]
 
@@ -119,8 +123,16 @@ GtOpenApiSchema >> gtPropertiesViewChildren [
 ]
 
 { #category : #'gt - extensions' }
-GtOpenApiSchema >> gtPropertiesViewTypeString [
-	^ self type ifNil: [ '' ]
+GtOpenApiSchema >> gtPropertiesViewTypeText [
+	| aText |
+	aText := (self type ifNil: [ '' ]) asRopedText.
+	self format
+		ifNotNil: [ :aFormat | 
+			| aFormatText |
+			aFormatText := (' (' , aFormat , ')') asRopedText
+					foreground: BrGlamorousColors disabledButtonTextColor.
+			aText append: aFormatText ].
+	^ aText
 ]
 
 { #category : #testing }

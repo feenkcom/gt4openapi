@@ -42,7 +42,7 @@ GtOpenApiReference >> gtPropertiesViewChildren [
 ]
 
 { #category : #'gt - extensions' }
-GtOpenApiReference >> gtPropertiesViewTypeString [
+GtOpenApiReference >> gtPropertiesViewTypeText [
 	^ (self object isNotNil and: [ self object name isNotNil ])
 		ifTrue: [ self object name ]
 		ifFalse: [ self ref ifNil: [ 'reference' ] ]
