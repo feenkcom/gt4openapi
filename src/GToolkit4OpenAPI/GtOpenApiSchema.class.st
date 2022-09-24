@@ -41,6 +41,15 @@ GtOpenApiSchema >> description: aValue [
 ]
 
 { #category : #accessing }
+GtOpenApiSchema >> directlyReferencedSchemas [
+	^ GtOpenApiSchemaReferenceCollector new
+		schema: self;
+		beWithDirectReferences;
+		beWithoutGivenSchema;
+		collect
+]
+
+{ #category : #accessing }
 GtOpenApiSchema >> enum: aValue [
 	everything at: #enum put: aValue
 ]
@@ -109,6 +118,15 @@ GtOpenApiSchema >> gtOpenApiStructureViewText [
 ]
 
 { #category : #'gt - extensions' }
+GtOpenApiSchema >> gtPaintSchemaReferencesFor: aView [
+	<gtView>
+	^ aView mondrian
+		title: 'Schema References';
+		priority: 5;
+		painting: [ :view | self paintSchemaReferences: self withAllReferencedSchemas on: view ]
+]
+
+{ #category : #'gt - extensions' }
 GtOpenApiSchema >> gtPropertiesFor: aView context: aContext [
 	<gtView>
 	self everything ifNil: [ ^ aView empty ].
@@ -128,18 +146,33 @@ GtOpenApiSchema >> gtPropertiesFor: aView context: aContext [
 							append: (' (required)' asRopedText foreground: BrGlamorousColors disabledButtonTextColor) ]
 					otherwise: [ aName ] ];
 		column: 'Type' text: [ :anAssoc | anAssoc value gtPropertiesViewTypeText ];
-		send: #value
+		send: [ :anAssoc | anAssoc value gtOpenApiViewSendObject ]
 ]
 
 { #category : #'gt - extensions' }
 GtOpenApiSchema >> gtPropertiesViewChildren [
-	^ self properties associations
+	self isObjectType ifTrue: [ ^ self properties associations ].
+	(self isArrayType and: [ self items isNotNil ])
+		ifTrue: [ ^ self items gtPropertiesViewChildren ].
+	^ #()
 ]
 
 { #category : #'gt - extensions' }
 GtOpenApiSchema >> gtPropertiesViewTypeText [
 	| aText |
 	aText := (self type ifNil: [ '' ]) asRopedText.
+
+	self isArrayType
+		ifTrue: [ | anItemName aItemText |
+			anItemName := self items
+					ifNotNil: [ :anObject | 
+						anObject isReference
+							ifTrue: [ anObject gtPropertiesViewTypeText ]
+							ifFalse: [ anObject name ] ]
+					ifNil: [ '?' ].
+			aItemText := (' of ' , anItemName) asRopedText.
+			aText append: aItemText ].
+
 	self format
 		ifNotNil: [ :aFormat | 
 			| aFormatText |
@@ -161,6 +194,16 @@ GtOpenApiSchema >> initialize [
 	super initialize.
 
 	everything := OrderedDictionary new
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiSchema >> isArrayType [
+	^ self type = 'array'
+]
+
+{ #category : #testing }
+GtOpenApiSchema >> isObjectType [
+	^ self type = 'object'
 ]
 
 { #category : #testing }
@@ -265,6 +308,42 @@ GtOpenApiSchema >> oneOf: aValue [
 	everything at: #oneOf put: aValue
 ]
 
+{ #category : #'gt - extensions' }
+GtOpenApiSchema >> paintSchemaReferences: aCollectionOfSchema on: aView [
+	aView nodes
+		stencil: [ :aSchema | 
+			BrFrame new
+				fitContent;
+				padding: (BlInsets all: 5);
+				addChild: (BrLabel new
+						fitContent;
+						aptitude: BrGlamorousLabelAptitude;
+						text: (aSchema name ifNil: [ aSchema type asString ])) ];
+		with: aCollectionOfSchema.
+
+	aView edges
+		stencil: [ :aSchema :fromElement :toElement | 
+			| aColor |
+			aColor := Color gray alpha: 0.2.
+			fromElement = toElement
+				ifFalse: [ BlLineElement new
+						border: (BlBorder paint: aColor width: 1);
+						toHead: (BlArrowheadSimpleArrow new border: (BlBorder paint: aColor width: 1)) ]
+				ifTrue: [ BlParabollaArcElement new
+						zIndex: 0;
+						curvatureFraction: 0.5;
+						border: (BlBorder paint: aColor width: 1);
+						toHead: (BlArrowheadSimpleArrow new border: (BlBorder paint: aColor width: 1)) ] ];
+		connectToAll: [ :aSchema | aSchema directlyReferencedSchemas ].
+
+	aView layout force
+		strength: 0.15;
+		charge: -350;
+		length: 100.
+
+	aView
+]
+
 { #category : #accessing }
 GtOpenApiSchema >> pattern: aValue [
 	everything at: #pattern put: aValue
@@ -272,11 +351,19 @@ GtOpenApiSchema >> pattern: aValue [
 
 { #category : #printing }
 GtOpenApiSchema >> printOn: aStream [
+	| aName |
 	super printOn: aStream.
-	self name ifNil: [ ^ self ].
+	everything ifNil: [ ^ self ].
+	aName := nil.
+	(self isObjectType and: [ self name isNotNil ])
+		ifTrue: [ aName := self name asString ].
+	(self isArrayType and: [ self items isNotNil and: [ self items isReference ] ])
+		ifTrue: [ aName := 'array of  ' , self items object name asString ].
+	aName ifNil: [ ^ self ].
+
 	aStream
 		nextPut: $(;
-		nextPutAll: self name asString;
+		nextPutAll: aName;
 		nextPut: $)
 ]
 
@@ -318,4 +405,13 @@ GtOpenApiSchema >> type: aValue [
 { #category : #accessing }
 GtOpenApiSchema >> uniqueItems: aValue [
 	everything at: #uniqueItems put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> withAllReferencedSchemas [
+	^ GtOpenApiSchemaReferenceCollector new
+		schema: self;
+		beWithNestedReferences;
+		beWithGivenSchema;
+		collect
 ]

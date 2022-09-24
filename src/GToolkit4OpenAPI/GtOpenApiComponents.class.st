@@ -59,16 +59,55 @@ GtOpenApiComponents >> examples: anObject [
 ]
 
 { #category : #'gt - extensions' }
+GtOpenApiComponents >> gtPaintSchemaReferencesFor: aView [
+	<gtView>
+	^ aView mondrian
+		title: 'Schema References';
+		priority: 5;
+		painting: [ :view | self paintSchemaReferences: self schemas values on: view ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiComponents >> gtRootSchemasFor: aView [
+	<gtView>
+	self schemas ifNil: [ ^ aView empty ].
+
+	^ aView columnedTree
+		title: 'Root Schemas';
+		priority: 2;
+		items: [ self rootSchemas sorted: [ :a :b | a name < b name ] ];
+		children: [ :aSchema | aSchema directlyReferencedSchemas reject: [ :each | each = aSchema ] ];
+		column: 'Name' text: #name;
+		column: 'Referenced Schemas'
+			text: [ :aSchema | 
+				String
+					streamContents: [ :aStream | 
+						aSchema directlyReferencedSchemas
+							do: [ :eachSchema | aStream nextPutAll: eachSchema name ]
+							separatedBy: [ aStream nextPutAll: ', ' ] ] ]
+]
+
+{ #category : #'gt - extensions' }
 GtOpenApiComponents >> gtSchemasFor: aView [
 	<gtView>
 	self schemas ifNil: [ ^ aView empty ].
 
-	^ aView columnedList
+	^ aView columnedTree
 		title: 'Schemas';
 		priority: 1;
 		items: [ self schemas associations sorted: [ :a :b | a key < b key ] ];
+		children: [ :anAssoc | 
+			(self schemasThatUseSchema: anAssoc value)
+				reject: [ :eachSchema | eachSchema = anAssoc value ]
+				thenCollect: [ :eachSchema | eachSchema name -> eachSchema ] ];
 		column: 'Name' text: #key;
-		column: 'Type' text: [ :anAssoc | anAssoc value type ];
+		column: 'Used By'
+			text: [ :anAssoc | 
+				String
+					streamContents: [ :aStream | 
+						(self schemasThatUseSchema: anAssoc value)
+							do: [ :eachSchema | aStream nextPutAll: eachSchema name ]
+							separatedBy: [ aStream nextPutAll: ', ' ] ] ];
 		send: #value
 ]
 
@@ -111,6 +150,36 @@ GtOpenApiComponents >> objectsDo: aBlock [
 					anObject objectsDo: aBlock ] ]
 ]
 
+{ #category : #'gt - extensions' }
+GtOpenApiComponents >> paintSchemaReferences: aCollectionOfSchemas on: aView [
+	aView nodes
+		stencil: [ :aSchema | 
+			BrLabel new
+				fitContent;
+				aptitude: BrGlamorousLabelAptitude;
+				text: aSchema name ];
+		with: aCollectionOfSchemas.
+
+	aView edges
+		stencil: [ :each | 
+			| aColor |
+			aColor := Color gray.
+			BlLineElement new
+				border: (BlBorder paint: aColor width: 1);
+				toHead: (BlArrowheadSimpleArrow new border: (BlBorder paint: aColor width: 1)) ];
+		connectToAll: [ :aSchema | 
+			aSchema properties values
+				select: [ :eachProperty | eachProperty isReference ]
+				thenCollect: #object ].
+
+	aView layout horizontalTree
+		levelDistance: 30;
+		nodeDistance: 30;
+		treesDistance: 30.
+
+	aView
+]
+
 { #category : #accessing }
 GtOpenApiComponents >> parameters [
 
@@ -136,6 +205,32 @@ GtOpenApiComponents >> responses: anObject [
 ]
 
 { #category : #accessing }
+GtOpenApiComponents >> rootSchemas [
+	^ self schemas values
+		select: [ :eachSchema | 
+			self schemas
+				allSatisfy: [ :otherSchema | 
+					| isNotReferenced |
+					isNotReferenced := true.
+					otherSchema = eachSchema
+						ifFalse: [ otherSchema properties values
+								do: [ :eachProperty | 
+									eachProperty
+										withObjectsDo: [ :eachObject | 
+											(eachObject isReference
+												and: [ eachObject object isNotNil and: [ eachObject object = eachSchema ] ])
+												ifTrue: [ NonInteractiveTranscript stdout
+														show: eachSchema name;
+														show: ' is referenced by ';
+														show: otherSchema name;
+														cr.
+
+
+													isNotReferenced := false ] ] ] ].
+					isNotReferenced ] ]
+]
+
+{ #category : #accessing }
 GtOpenApiComponents >> schemas [
 
 	^ schemas
@@ -145,6 +240,25 @@ GtOpenApiComponents >> schemas [
 GtOpenApiComponents >> schemas: aDictionary [
 	schemas := aDictionary.
 	aDictionary keysAndValuesDo: [ :aName :anObject | anObject name: aName ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiComponents >> schemasThatUseSchema: aSchema [
+	^ self schemas values
+		select: [ :eachSchema | 
+			| isUser |
+			isUser := false.
+			eachSchema properties values
+				do: [ :eachProperty | 
+					(eachProperty isReference and: [ eachProperty object = aSchema ])
+						ifTrue: [ isUser := true ].
+
+					(eachProperty isSchema
+						and: [ eachProperty isArrayType
+								and: [ eachProperty items isReference and: [ eachProperty items object = aSchema ] ] ])
+						ifTrue: [ isUser := true ] ].
+
+			isUser ]
 ]
 
 { #category : #accessing }

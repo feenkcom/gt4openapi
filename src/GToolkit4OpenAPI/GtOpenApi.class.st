@@ -57,6 +57,31 @@ GtOpenApi >> externalDocs: anObject [
 ]
 
 { #category : #'gt - extensions' }
+GtOpenApi >> gtComponentPaintSchemaReferencesFor: aView [
+	<gtView>
+	self components ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Schema References';
+		priority: 15;
+		object: [ self components ];
+		view: #gtPaintSchemaReferencesFor:
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApi >> gtComponentRootSchemasFor: aView [
+	<gtView>
+	self components ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Root Schemas';
+		tooltip: 'Root schemas are those that are not used by other schemas';
+		priority: 13;
+		object: [ self components ];
+		view: #gtRootSchemasFor:
+]
+
+{ #category : #'gt - extensions' }
 GtOpenApi >> gtComponentSchemasFor: aView [
 	<gtView>
 	self components ifNil: [ ^ aView empty ].
