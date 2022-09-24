@@ -18,6 +18,30 @@ GtOpenApiMediaType >> gtOpenApiContentViewResponseItemText [
 		ifNil: [ self asString ]
 ]
 
+{ #category : #accessing }
+GtOpenApiMediaType >> gtPaintSchemaReferencesFor: aView context: aContext [
+	<gtView>
+	self schema ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Schema References';
+		priority: 5;
+		object: [ self schema ];
+		view: #gtPaintSchemaReferencesFor:context:
+]
+
+{ #category : #accessing }
+GtOpenApiMediaType >> gtSchemaPropertiesFor: aView context: aContext [
+	<gtView>
+	self schema ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Schema Properties';
+		priority: 1;
+		object: [ self schema ];
+		view: #gtSchemaPropertiesFor:context:
+]
+
 { #category : #enumerating }
 GtOpenApiMediaType >> objectsDo: aBlock [
 	"Iterate all OpenApi objects. 

@@ -118,7 +118,7 @@ GtOpenApiSchema >> gtOpenApiStructureViewText [
 ]
 
 { #category : #'gt - extensions' }
-GtOpenApiSchema >> gtPaintSchemaReferencesFor: aView [
+GtOpenApiSchema >> gtPaintSchemaReferencesFor: aView context: aContext [
 	<gtView>
 	^ aView mondrian
 		title: 'Schema References';
@@ -134,7 +134,7 @@ GtOpenApiSchema >> gtPropertiesFor: aView context: aContext [
 	^ aView columnedTree
 		title: 'Properties';
 		priority: 1;
-		items: [ self properties associations ];
+		items: [ self gtPropertiesViewChildren ];
 		children: [ :anAssoc | anAssoc value gtPropertiesViewChildren ];
 		column: 'Name'
 			text: [ :anAssoc | 
@@ -168,7 +168,7 @@ GtOpenApiSchema >> gtPropertiesViewTypeText [
 					ifNotNil: [ :anObject | 
 						anObject isReference
 							ifTrue: [ anObject gtPropertiesViewTypeText ]
-							ifFalse: [ anObject name ] ]
+							ifFalse: [ anObject name ifNil: [ anObject type asString ] ] ]
 					ifNil: [ '?' ].
 			aItemText := (' of ' , anItemName) asRopedText.
 			aText append: aItemText ].
@@ -180,6 +180,11 @@ GtOpenApiSchema >> gtPropertiesViewTypeText [
 					foreground: BrGlamorousColors disabledButtonTextColor.
 			aText append: aFormatText ].
 	^ aText
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiSchema >> gtSchemaPropertiesFor: aView context: aContext [
+	^ self gtPropertiesFor: aView context: aContext
 ]
 
 { #category : #testing }
@@ -413,5 +418,6 @@ GtOpenApiSchema >> withAllReferencedSchemas [
 		schema: self;
 		beWithNestedReferences;
 		beWithGivenSchema;
+		beNamedObjectSchemas;
 		collect
 ]

@@ -43,7 +43,31 @@ GtOpenApiResponse >> gtDescriptionFor: aView [
 
 { #category : #'gt - extensions' }
 GtOpenApiResponse >> gtOpenApiPathsViewChildren [
-	^ #()
+	^ self content
+		ifNil: [ #() ]
+		ifNotNil: [ :aDictionary | 
+			aDictionary associations
+				collect: [ :anAssoc | 
+					('content' asRopedText
+						italic;
+						foreground: BrGlamorousColors disabledButtonTextColor)
+						-> (GtOpenApiViewObject new
+								name: anAssoc key;
+								description: anAssoc value gtOpenApiContentViewResponseItemText;
+								object: anAssoc value) ] ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiResponse >> gtPaintSchemaReferencesFor: aView context: aContext [
+	<gtView>
+	self content ifNil: [ ^ aView empty ].
+	self content ifEmpty: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Schema References';
+		priority: 5;
+		object: [ self content values first ];
+		view: #gtPaintSchemaReferencesFor:context:
 ]
 
 { #category : #'gt - extensions' }

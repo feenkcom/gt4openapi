@@ -72,7 +72,7 @@ TGtOpenApiWithFields >> gtFieldsFor: aView [
 		items: [ self fields associations ];
 		column: 'Name' text: #key;
 		column: 'Value' text: [ :anAssoc | anAssoc value gtOpenApiParameterViewText ];
-		send: #value
+		send: [ :anAssoc | anAssoc value ]
 ]
 
 { #category : #'accessing - fields' }

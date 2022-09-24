@@ -6,10 +6,21 @@ Class {
 		'toProcess',
 		'result',
 		'wantsNestedReferences',
-		'wantsGivenSchema'
+		'wantsGivenSchema',
+		'wantsNamedObjectSchemas'
 	],
 	#category : #'GToolkit4OpenAPI-New-Support'
 }
+
+{ #category : #'api - initialization' }
+GtOpenApiSchemaReferenceCollector >> beAnyObjectSchemas [
+	wantsNamedObjectSchemas := false
+]
+
+{ #category : #'api - initialization' }
+GtOpenApiSchemaReferenceCollector >> beNamedObjectSchemas [
+	wantsNamedObjectSchemas := true
+]
 
 { #category : #'api - initialization' }
 GtOpenApiSchemaReferenceCollector >> beWithDirectReferences [
@@ -33,11 +44,16 @@ GtOpenApiSchemaReferenceCollector >> beWithoutGivenSchema [
 
 { #category : #'api - building' }
 GtOpenApiSchemaReferenceCollector >> collect [
+	| aRealSchema |
 	toProcess := Stack new.
-	toProcess push: self schema.
+
+	aRealSchema := self extractObjectSchema: self schema.
+	aRealSchema ifNil: [ ^ #() ].
+
+	toProcess push: aRealSchema.
 
 	result := OrderedCollection new.
-	self wantsGivenSchema ifTrue: [ result add: self schema ].
+	self wantsGivenSchema ifTrue: [ result add: aRealSchema ].
 
 	[ toProcess isEmpty ] whileFalse: [ self collectForSchema: toProcess pop ].
 
@@ -47,17 +63,10 @@ GtOpenApiSchemaReferenceCollector >> collect [
 { #category : #'private - building' }
 GtOpenApiSchemaReferenceCollector >> collectForProperty: aProperty ofSchema: aSchema [
 	| anotherSchema |
-	(aProperty isReference
-		and: [ anotherSchema := aProperty object.
-			anotherSchema isNotNil and: [ anotherSchema isSchema ] ])
-		ifTrue: [ self registerSchema: anotherSchema ].
+	anotherSchema := self extractObjectSchema: aProperty.
+	anotherSchema ifNil: [ ^ self ].
 
-	(aProperty isSchema
-		and: [ aProperty isArrayType and: [ aProperty items isNotNil ] ])
-		ifTrue: [ anotherSchema := aProperty items.
-			(anotherSchema isReference and: [ anotherSchema object isNotNil ])
-				ifTrue: [ anotherSchema := anotherSchema object ].
-			self registerSchema: anotherSchema ]
+	self registerSchema: anotherSchema
 ]
 
 { #category : #'private - building' }
@@ -66,11 +75,20 @@ GtOpenApiSchemaReferenceCollector >> collectForSchema: aSchema [
 		do: [ :eachProperty | self collectForProperty: eachProperty ofSchema: aSchema ]
 ]
 
+{ #category : #'api - building' }
+GtOpenApiSchemaReferenceCollector >> extractObjectSchema: aSchema [
+	^ GtOpenApiObjectSchemaFinder new
+		schema: aSchema;
+		wantsNamedObjectSchemas: self wantsNamedObjectSchemas;
+		find
+]
+
 { #category : #initialization }
 GtOpenApiSchemaReferenceCollector >> initialize [
 	super initialize.
 	wantsNestedReferences := false.
 	wantsGivenSchema := false.
+	wantsNamedObjectSchemas := true.
 ]
 
 { #category : #'private - building' }
@@ -96,6 +114,11 @@ GtOpenApiSchemaReferenceCollector >> schema: anObject [
 { #category : #testing }
 GtOpenApiSchemaReferenceCollector >> wantsGivenSchema [
 	^ wantsGivenSchema
+]
+
+{ #category : #testing }
+GtOpenApiSchemaReferenceCollector >> wantsNamedObjectSchemas [
+	^ wantsNamedObjectSchemas
 ]
 
 { #category : #testing }

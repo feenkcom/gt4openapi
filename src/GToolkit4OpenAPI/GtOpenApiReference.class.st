@@ -63,6 +63,23 @@ GtOpenApiReference >> gtOpenApiViewSendObject [
 ]
 
 { #category : #'gt - extensions' }
+GtOpenApiReference >> gtPaintSchemaReferencesFor: aView context: aContext [
+	<gtView>
+	self object ifNil: [ ^ aView empty ].
+	self object isSchema ifFalse: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Schema References';
+		priority: 5;
+		object: [ self object ];
+		view: #gtPaintSchemaReferencesFor:context:;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Schema'
+			tooltip: 'Inspect schema'
+			action: [ :aButton | aButton phlow spawnObject: self object ]
+]
+
+{ #category : #'gt - extensions' }
 GtOpenApiReference >> gtPropertiesViewChildren [
 	^ self object ifNil: [ #() ] ifNotNil: [ self object gtPropertiesViewChildren ]
 ]
@@ -81,7 +98,7 @@ GtOpenApiReference >> gtSchemaPropertiesFor: aView context: aContext [
 	self object isSchema ifFalse: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Properties';
+		title: 'Schema Properties';
 		priority: 1;
 		object: [ self object ];
 		view: #gtPropertiesFor:context:;
