@@ -58,6 +58,11 @@ GtOpenApiViewObject >> gtPathsViewSendObject [
 	^ self object
 ]
 
+{ #category : #testing }
+GtOpenApiViewObject >> isTag [
+	^ false
+]
+
 { #category : #accessing }
 GtOpenApiViewObject >> name [
 

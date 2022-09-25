@@ -154,6 +154,12 @@ GtOpenApiPathItem >> head: anObject [
 	head := anObject
 ]
 
+{ #category : #testing }
+GtOpenApiPathItem >> includesOperationWithTagNamed: aTagName [
+	^ self operations
+		anySatisfy: [ :eachOperation | eachOperation includesTagNamed: aTagName ]
+]
+
 { #category : #enumerating }
 GtOpenApiPathItem >> objectsDo: aBlock [
 	"Iterate all OpenApi objects. 
@@ -164,6 +170,12 @@ GtOpenApiPathItem >> objectsDo: aBlock [
 	self operations do: [ :eachOperation | eachOperation withObjectsDo: aBlock ].
 	self servers do: [ :eachServer | eachServer withObjectsDo: aBlock ].
 	self parameters do: [ :eachParameter | eachParameter withObjectsDo: aBlock ].
+]
+
+{ #category : #accessing }
+GtOpenApiPathItem >> operationTags [
+	<return: #Set of: #String>
+	^ self operations flatCollect: #tags as: Set
 ]
 
 { #category : #accessing }

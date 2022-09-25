@@ -112,6 +112,34 @@ GtOpenApi >> gtPathsFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtOpenApi >> gtPathsPerOperationTagFor: aView [
+	<gtView>
+	self paths ifNil: [ ^ aView empty ].
+
+	^ aView columnedTree
+		title: 'Paths Per Tag';
+		priority: 6;
+		items: [ (self pathOperationTags asOrderedCollection sorted: [ :a :b | a name < b name ])
+				collect: [ :each | each name -> each ] ];
+		children: [ :anAssoc | 
+			anAssoc value isTag
+				ifTrue: [ self gtPathsWithOperationTag: anAssoc value ]
+				ifFalse: [ anAssoc value gtOpenApiPathsViewChildren ] ];
+		column: 'Tag/End Point' text: #key;
+		column: 'Operations'
+			text: [ :anAssoc | anAssoc value gtPathsViewOperationsText ];
+		column: 'Description'
+			text: [ :anAssoc | anAssoc value gtPathsViewDescriptionText ];
+		send: [ :anAssoc | anAssoc value gtPathsViewSendObject ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApi >> gtPathsWithOperationTag: aTag [
+	^ (self pathsWithOperationTag: aTag)
+		collect: [ :aPath | (self paths keyAtValue: aPath) -> aPath ]
+]
+
+{ #category : #'gt - extensions' }
 GtOpenApi >> gtServersFor: aView [
 	<gtView>
 	self paths ifNil: [ ^ aView empty ].
@@ -172,6 +200,18 @@ GtOpenApi >> openapi: anObject [
 ]
 
 { #category : #accessing }
+GtOpenApi >> pathOperationTags [
+	| aSet |
+	aSet := self paths flatCollect: #operationTags as: Set.
+	^ aSet
+		collect: [ :eachName | 
+			self tags
+				detect: [ :eachTag | eachTag name = eachName ]
+				ifFound: [ :aTag | aTag ]
+				ifNone: [ GtOpenApiUndocumentedTag new name: eachName ] ]
+]
+
+{ #category : #accessing }
 GtOpenApi >> paths [
 
 	^ paths
@@ -181,6 +221,12 @@ GtOpenApi >> paths [
 GtOpenApi >> paths: anObject [
 
 	paths := anObject
+]
+
+{ #category : #accessing }
+GtOpenApi >> pathsWithOperationTag: aTag [
+	^ self paths
+		select: [ :eachPath | eachPath includesOperationWithTagNamed: aTag name ]
 ]
 
 { #category : #accessing }
@@ -208,8 +254,7 @@ GtOpenApi >> servers: anObject [
 
 { #category : #accessing }
 GtOpenApi >> tags [
-
-	^ tags
+	^ tags ifNil: [ #() ]
 ]
 
 { #category : #accessing }

@@ -33,6 +33,11 @@ TGtOpenApiObject >> isSchema [
 	^ false
 ]
 
+{ #category : #testing }
+TGtOpenApiObject >> isTag [
+	^ false
+]
+
 { #category : #enumerating }
 TGtOpenApiObject >> objectsDo: aBlock [
 	"Iterate all OpenApi objects. 

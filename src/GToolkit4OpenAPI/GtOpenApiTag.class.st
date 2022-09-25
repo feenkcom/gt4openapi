@@ -40,6 +40,21 @@ GtOpenApiTag >> externalDocs: anObject [
 	externalDocs := anObject
 ]
 
+{ #category : #'gt - extensions' }
+GtOpenApiTag >> gtPathsViewDescriptionText [
+	^ self description ifNil: [ '' ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiTag >> gtPathsViewOperationsText [
+	^ ''
+]
+
+{ #category : #testing }
+GtOpenApiTag >> isTag [
+	^ true
+]
+
 { #category : #accessing }
 GtOpenApiTag >> name [
 

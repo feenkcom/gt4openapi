@@ -142,6 +142,11 @@ GtOpenApiOperation >> gtTagsFor: aView [
 		items: [ self tags ]
 ]
 
+{ #category : #testing }
+GtOpenApiOperation >> includesTagNamed: aTagName [
+	^ self tags includes: aTagName
+]
+
 { #category : #accessing }
 GtOpenApiOperation >> isDeprecated [
 	^ isDeprecated ifNil: [ false ]
@@ -260,8 +265,7 @@ GtOpenApiOperation >> summary: anObject [
 
 { #category : #accessing }
 GtOpenApiOperation >> tags [
-
-	^ tags
+	^ tags ifNil: [ #() ]
 ]
 
 { #category : #accessing }
