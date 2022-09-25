@@ -51,3 +51,16 @@ GtOpenApiMediaType >> objectsDo: aBlock [
 
 	self schema ifNotNil: [ :aSchema | aSchema withObjectsDo: aBlock ]
 ]
+
+{ #category : #accessing }
+GtOpenApiMediaType >> realSchema [
+	^ GtOpenApiObjectSchemaFinder new
+		schema: self schema;
+		includeArrays: true;
+		find
+]
+
+{ #category : #accessing }
+GtOpenApiMediaType >> schema [
+	^ self fieldAt: #schema
+]

@@ -16,7 +16,8 @@ Class {
 		'patch',
 		'trace',
 		'servers',
-		'parameters'
+		'parameters',
+		'endPoint'
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
@@ -27,6 +28,12 @@ GtOpenApiPathItem >> accept: aVisitor [
 ]
 
 { #category : #accessing }
+GtOpenApiPathItem >> configureOperation: anOperation method: aMethodName [
+	anOperation method: aMethodName.
+	anOperation endPoint: self endPoint
+]
+
+{ #category : #accessing }
 GtOpenApiPathItem >> delete [
 
 	^ delete
@@ -34,7 +41,7 @@ GtOpenApiPathItem >> delete [
 
 { #category : #accessing }
 GtOpenApiPathItem >> delete: anObject [
-
+	self configureOperation: anObject method: #DELETE.
 	delete := anObject
 ]
 
@@ -51,6 +58,18 @@ GtOpenApiPathItem >> description: anObject [
 ]
 
 { #category : #accessing }
+GtOpenApiPathItem >> endPoint [
+
+	^ endPoint
+]
+
+{ #category : #accessing }
+GtOpenApiPathItem >> endPoint: anObject [
+	endPoint := anObject.
+	self operations do: [ :eachOperation | eachOperation endPoint: anObject ]
+]
+
+{ #category : #accessing }
 GtOpenApiPathItem >> get [
 
 	^ get
@@ -58,7 +77,7 @@ GtOpenApiPathItem >> get [
 
 { #category : #accessing }
 GtOpenApiPathItem >> get: anObject [
-
+	self configureOperation: anObject method: #GET.
 	get := anObject
 ]
 
@@ -150,7 +169,7 @@ GtOpenApiPathItem >> head [
 
 { #category : #accessing }
 GtOpenApiPathItem >> head: anObject [
-
+	self configureOperation: anObject method: #HEAD.
 	head := anObject
 ]
 
@@ -200,7 +219,7 @@ GtOpenApiPathItem >> options [
 
 { #category : #accessing }
 GtOpenApiPathItem >> options: anObject [
-
+	self configureOperation: anObject method: #OPTIONS.
 	options := anObject
 ]
 
@@ -223,7 +242,7 @@ GtOpenApiPathItem >> patch [
 
 { #category : #accessing }
 GtOpenApiPathItem >> patch: anObject [
-
+	self configureOperation: anObject method: #PATCH.
 	patch := anObject
 ]
 
@@ -235,8 +254,20 @@ GtOpenApiPathItem >> post [
 
 { #category : #accessing }
 GtOpenApiPathItem >> post: anObject [
-
+	self configureOperation: anObject method: #POST.
 	post := anObject
+]
+
+{ #category : #printing }
+GtOpenApiPathItem >> printOn: aStream [
+	super printOn: aStream.
+
+	self endPoint ifNil: [ ^ self ].
+
+	aStream
+		nextPut: $(;
+		nextPutAll: self endPoint asString;
+		nextPut: $)
 ]
 
 { #category : #accessing }
@@ -247,7 +278,7 @@ GtOpenApiPathItem >> put [
 
 { #category : #accessing }
 GtOpenApiPathItem >> put: anObject [
-
+	self configureOperation: anObject method: #PUT.
 	put := anObject
 ]
 
@@ -293,5 +324,6 @@ GtOpenApiPathItem >> traceOp [
 
 { #category : #accessing }
 GtOpenApiPathItem >> traceOp: anOperation [
+	self configureOperation: anOperation method: #TRACE.
 	trace := anOperation
 ]

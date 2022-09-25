@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'schema',
-		'wantsNamedObjectSchemas'
+		'wantsNamedObjectSchemas',
+		'includeArrays'
 	],
 	#category : #'GToolkit4OpenAPI-New-Support'
 }
@@ -24,6 +25,8 @@ GtOpenApiObjectSchemaFinder >> find [
 { #category : #'private - finding' }
 GtOpenApiObjectSchemaFinder >> findArrayTypeSchema: anArrayTypeSchema [
 	| anotherSchema |
+	self includeArrays ifTrue: [ ^ anArrayTypeSchema ].
+
 	anotherSchema := anArrayTypeSchema items.
 	anotherSchema ifNil: [ ^ nil ].
 
@@ -51,9 +54,22 @@ GtOpenApiObjectSchemaFinder >> findObjectSchemaInReference: aReference [
 ]
 
 { #category : #accessing }
+GtOpenApiObjectSchemaFinder >> includeArrays [
+
+	^ includeArrays
+]
+
+{ #category : #accessing }
+GtOpenApiObjectSchemaFinder >> includeArrays: anObject [
+
+	includeArrays := anObject
+]
+
+{ #category : #accessing }
 GtOpenApiObjectSchemaFinder >> initialize [
 	super initialize.
-	wantsNamedObjectSchemas := true
+	wantsNamedObjectSchemas := true.
+	includeArrays := false
 ]
 
 { #category : #accessing }

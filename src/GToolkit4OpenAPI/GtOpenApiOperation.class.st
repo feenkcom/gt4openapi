@@ -15,7 +15,9 @@ Class {
 		'callbacks',
 		'security',
 		'servers',
-		'isDeprecated'
+		'isDeprecated',
+		'method',
+		'endPoint'
 	],
 	#category : #'GToolkit4OpenAPI-New-Model'
 }
@@ -47,6 +49,18 @@ GtOpenApiOperation >> description [
 GtOpenApiOperation >> description: anObject [
 
 	description := anObject
+]
+
+{ #category : #accessing }
+GtOpenApiOperation >> endPoint [
+
+	^ endPoint
+]
+
+{ #category : #accessing }
+GtOpenApiOperation >> endPoint: anObject [
+
+	endPoint := anObject
 ]
 
 { #category : #accessing }
@@ -156,6 +170,27 @@ GtOpenApiOperation >> isDeprecated [
 GtOpenApiOperation >> isDeprecated: anObject [
 
 	isDeprecated := anObject
+]
+
+{ #category : #accessing }
+GtOpenApiOperation >> method [
+
+	^ method
+]
+
+{ #category : #accessing }
+GtOpenApiOperation >> method: anObject [
+
+	method := anObject
+]
+
+{ #category : #accessing }
+GtOpenApiOperation >> methodAndEndPointString [
+	| aMethod anEndPoint |
+	aMethod := self method ifNil: [ '?' ].
+	anEndPoint := self endPoint ifNil: [ '/?' ].
+
+	^ aMethod , ' ' , anEndPoint
 ]
 
 { #category : #enumerating }

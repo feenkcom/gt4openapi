@@ -218,9 +218,10 @@ GtOpenApi >> paths [
 ]
 
 { #category : #accessing }
-GtOpenApi >> paths: anObject [
+GtOpenApi >> paths: aDictionary [
+	aDictionary keysAndValuesDo: [ :aName :aPath | aPath endPoint: aName ].
 
-	paths := anObject
+	paths := aDictionary
 ]
 
 { #category : #accessing }

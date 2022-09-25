@@ -135,23 +135,22 @@ GtOpenApiSchema >> gtPropertiesFor: aView context: aContext [
 		title: 'Properties';
 		priority: 1;
 		items: [ self gtPropertiesViewChildren ];
-		children: [ :anAssoc | anAssoc value gtPropertiesViewChildren ];
+		children: [ :aSchemaProperty | aSchemaProperty gtPropertiesViewChildren ];
 		column: 'Name'
-			text: [ :anAssoc | 
-				| aName |
-				aName := anAssoc key.
-				self
-					ifProperty: aName
-					requiredDo: [ aName asRopedText bold
-							append: (' (required)' asRopedText foreground: BrGlamorousColors disabledButtonTextColor) ]
-					otherwise: [ aName ] ];
-		column: 'Type' text: [ :anAssoc | anAssoc value gtPropertiesViewTypeText ];
-		send: [ :anAssoc | anAssoc value gtOpenApiViewSendObject ]
+			text: [ :aSchemaProperty | aSchemaProperty gtPropertiesViewName ];
+		column: 'Type' text: [ :aSchemaProperty | aSchemaProperty gtPropertiesViewTypeText ];
+		send: [ :aSchemaProperty | aSchemaProperty gtOpenApiViewSendObject ]
 ]
 
 { #category : #'gt - extensions' }
 GtOpenApiSchema >> gtPropertiesViewChildren [
-	self isObjectType ifTrue: [ ^ self properties associations ].
+	self isObjectType
+		ifTrue: [ ^ self properties associations
+				collect: [ :anAssoc | 
+					GtOpenApiSchemaProperty new
+						propertyName: anAssoc key;
+						property: anAssoc value;
+						schema: self ] ].
 	(self isArrayType and: [ self items isNotNil ])
 		ifTrue: [ ^ self items gtPropertiesViewChildren ].
 	^ #()
@@ -359,11 +358,7 @@ GtOpenApiSchema >> printOn: aStream [
 	| aName |
 	super printOn: aStream.
 	everything ifNil: [ ^ self ].
-	aName := nil.
-	(self isObjectType and: [ self name isNotNil ])
-		ifTrue: [ aName := self name asString ].
-	(self isArrayType and: [ self items isNotNil and: [ self items isReference ] ])
-		ifTrue: [ aName := 'array of  ' , self items object name asString ].
+	aName := self readableName.
 	aName ifNil: [ ^ self ].
 
 	aStream
@@ -380,6 +375,17 @@ GtOpenApiSchema >> properties [
 { #category : #accessing }
 GtOpenApiSchema >> properties: aValue [
 	everything at: #properties put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> readableName [
+	| aName |
+	(self isObjectType and: [ self name isNotNil ])
+		ifTrue: [ aName := self name asString ].
+	(self isArrayType and: [ self items isNotNil and: [ self items isReference ] ])
+		ifTrue: [ aName := 'array of ' , self items object name asString ].
+
+	^ aName
 ]
 
 { #category : #accessing }
