@@ -5,11 +5,7 @@ Class {
 }
 
 { #category : #accessing }
-BaselineOfGToolkit4OpenAPI >> baselineOf: spec [
-<baseline>
-	spec
-		for: #common do: [
-			spec
-				package: 'GToolkit4OpenAPI' 
-				 ]
+BaselineOfGToolkit4OpenAPI >> baseline: spec [
+	<baseline>
+	spec for: #common do: [ spec package: 'GToolkit4OpenAPI' ]
 ]
