@@ -219,14 +219,7 @@ GtOpenApiComponents >> rootSchemas [
 										withObjectsDo: [ :eachObject | 
 											(eachObject isReference
 												and: [ eachObject object isNotNil and: [ eachObject object = eachSchema ] ])
-												ifTrue: [ NonInteractiveTranscript stdout
-														show: eachSchema name;
-														show: ' is referenced by ';
-														show: otherSchema name;
-														cr.
-
-
-													isNotReferenced := false ] ] ] ].
+												ifTrue: [ isNotReferenced := false ] ] ] ].
 					isNotReferenced ] ]
 ]
 
