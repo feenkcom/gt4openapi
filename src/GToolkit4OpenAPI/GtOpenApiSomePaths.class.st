@@ -19,7 +19,7 @@ GtOpenApiSomePaths >> gtPathsFor: aView [
 		items: [ (self paths collect: [ :each | each endPoint -> each ])
 				sorted: [ :a :b | a key < b key ] ];
 		children: [ :anAssoc | anAssoc value gtOpenApiPathsViewChildren ];
-		column: 'End Point' text: #key;
+		column: 'End Point' text: #key weight: 2;
 		column: 'Operations'
 			text: [ :anAssoc | anAssoc value gtPathsViewOperationsText ];
 		column: 'Description'
