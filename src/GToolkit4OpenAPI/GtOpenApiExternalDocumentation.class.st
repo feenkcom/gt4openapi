@@ -27,6 +27,11 @@ GtOpenApiExternalDocumentation >> description: anObject [
 	description := anObject
 ]
 
+{ #category : #enumerating }
+GtOpenApiExternalDocumentation >> objectsDo: aBlock [
+	"No Objects to iterate"
+]
+
 { #category : #accessing }
 GtOpenApiExternalDocumentation >> url [
 

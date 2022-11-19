@@ -61,6 +61,16 @@ GtOpenApiSchema >> everything [
 ]
 
 { #category : #accessing }
+GtOpenApiSchema >> example [
+	^ everything at: #example ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> example: aValue [
+	everything at: #example put: aValue
+]
+
+{ #category : #accessing }
 GtOpenApiSchema >> exclusiveMaximum: aValue [
 	everything at: #exclusiveMaximum put: aValue
 ]
