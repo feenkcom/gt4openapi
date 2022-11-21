@@ -73,6 +73,7 @@ GtOCodeGenExamples >> firstSchemaProperties [
 { #category : #accessing }
 GtOCodeGenExamples >> generatedClasses [
 	<gtExample>
+	<noTest>
 	|firstSchema|
 	firstSchema := self firstSchema.
 	^ self codeGenerator generateClassFor:firstSchema withProperties: self firstSchemaProperties
