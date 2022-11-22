@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'name'
 	],
-	#category : #'GToolkit4OpenAPI-New - Support'
+	#category : #'GToolkit4OpenAPI-Support'
 }
 
 { #category : #'gt - extensions' }

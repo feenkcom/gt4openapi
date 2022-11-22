@@ -1,7 +1,7 @@
 Class {
 	#name : #GtOpenApiParser,
 	#superclass : #Object,
-	#category : #'GToolkit4OpenAPI-New-Parser'
+	#category : #'GToolkit4OpenAPI-Parser'
 }
 
 { #category : #'api - parsing' }
@@ -70,7 +70,9 @@ GtOpenApiParser >> initializeMappingsFor: aMapper [
 	self mappingOfOpenApiSchemaFor: aMapper.
 	self mappingOfOpenApiMediaTypeFor: aMapper.
 	self mappingOfDictionaryOf: GtOpenApiMediaType for: aMapper.
+	self mappingOfOpenApiHeaderFor: aMapper.
 	self mappingOfDictionaryOfReferenceOr: GtOpenApiHeader for: aMapper.
+	self mappingOfReferenceOr: GtOpenApiHeader for: aMapper.
 	self mappingOfDictionaryOfReferenceOr: GtOpenApiLink for: aMapper.
 	self mappingOfOpenApiLinkFor: aMapper.
 	self mappingOfReferenceOr: GtOpenApiLink for: aMapper

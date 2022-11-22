@@ -7,7 +7,7 @@ Class {
 		'rootObject',
 		'stack'
 	],
-	#category : #'GToolkit4OpenAPI-New-Parser'
+	#category : #'GToolkit4OpenAPI-Parser'
 }
 
 { #category : #'private - resolving' }

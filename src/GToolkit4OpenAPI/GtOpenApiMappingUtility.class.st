@@ -1,7 +1,7 @@
 Class {
 	#name : #GtOpenApiMappingUtility,
 	#superclass : #Object,
-	#category : #'GToolkit4OpenAPI-New-Parser'
+	#category : #'GToolkit4OpenAPI-Parser'
 }
 
 { #category : #'mapping - utilities' }
