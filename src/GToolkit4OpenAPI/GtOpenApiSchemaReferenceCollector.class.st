@@ -9,7 +9,7 @@ Class {
 		'wantsGivenSchema',
 		'wantsNamedObjectSchemas'
 	],
-	#category : #'GToolkit4OpenAPI-New-Support'
+	#category : #'GToolkit4OpenAPI-Support'
 }
 
 { #category : #'api - initialization' }

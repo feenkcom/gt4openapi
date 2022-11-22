@@ -7,7 +7,7 @@ Class {
 		'description',
 		'children'
 	],
-	#category : #'GToolkit4OpenAPI-New-Support'
+	#category : #'GToolkit4OpenAPI-Support'
 }
 
 { #category : #accessing }

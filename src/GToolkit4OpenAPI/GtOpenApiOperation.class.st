@@ -19,7 +19,7 @@ Class {
 		'method',
 		'endPoint'
 	],
-	#category : #'GToolkit4OpenAPI-New-Model'
+	#category : #'GToolkit4OpenAPI-Model'
 }
 
 { #category : #visiting }

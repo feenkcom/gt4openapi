@@ -1,7 +1,7 @@
 Class {
 	#name : #GtOpenApiParser,
 	#superclass : #Object,
-	#category : #'GToolkit4OpenAPI-New-Parser'
+	#category : #'GToolkit4OpenAPI-Parser'
 }
 
 { #category : #'api - parsing' }

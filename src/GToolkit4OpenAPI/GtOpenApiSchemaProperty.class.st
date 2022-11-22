@@ -6,7 +6,7 @@ Class {
 		'propertyName',
 		'schema'
 	],
-	#category : #'GToolkit4OpenAPI-New-Support'
+	#category : #'GToolkit4OpenAPI-Support'
 }
 
 { #category : #'gt - extensions' }

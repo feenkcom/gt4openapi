@@ -1,6 +1,6 @@
 Trait {
 	#name : #TGtOpenApiObject,
-	#category : #'GToolkit4OpenAPI-New-Model'
+	#category : #'GToolkit4OpenAPI-Model'
 }
 
 { #category : #accessing }

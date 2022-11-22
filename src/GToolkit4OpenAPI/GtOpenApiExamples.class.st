@@ -1,7 +1,7 @@
 Class {
 	#name : #GtOpenApiExamples,
 	#superclass : #Object,
-	#category : #'GToolkit4OpenAPI-New-Examples'
+	#category : #'GToolkit4OpenAPI-Examples'
 }
 
 { #category : #accessing }

@@ -19,7 +19,7 @@ Class {
 		'tags',
 		'externalDocs'
 	],
-	#category : #'GToolkit4OpenAPI-New-Core'
+	#category : #'GToolkit4OpenAPI-Core'
 }
 
 { #category : #'api - parsing' }

@@ -7,7 +7,7 @@ Class {
 		'ref',
 		'object'
 	],
-	#category : #'GToolkit4OpenAPI-New-Model'
+	#category : #'GToolkit4OpenAPI-Model'
 }
 
 { #category : #visiting }

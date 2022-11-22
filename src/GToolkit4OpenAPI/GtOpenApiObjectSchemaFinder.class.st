@@ -6,7 +6,7 @@ Class {
 		'wantsNamedObjectSchemas',
 		'includeArrays'
 	],
-	#category : #'GToolkit4OpenAPI-New-Support'
+	#category : #'GToolkit4OpenAPI-Support'
 }
 
 { #category : #'private - finding' }
