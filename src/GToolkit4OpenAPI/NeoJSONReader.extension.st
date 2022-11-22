@@ -16,6 +16,10 @@ NeoJSONReader >> peekPropertyName [
 	[ stream atEnd not and: [ stream peek isSeparator ] ]
 		whileTrue: [ stream next ].
 
-	(stream peekFor: $") ifFalse: [ self error: '" expected' ].
+	(stream peekFor: $")
+		ifFalse: [ (stream peekFor: $})
+				ifFalse: [ self error: '" or } expected' ]
+				ifTrue: [ ^ '' ] ].
+				
 	^ stream upTo: $"
 ]

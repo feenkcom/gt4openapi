@@ -215,6 +215,16 @@ GtOpenApiSchema >> isArrayType [
 	^ self type = 'array'
 ]
 
+{ #category : #accessing }
+GtOpenApiSchema >> isDeprecated [
+	^ everything at: #isDeprecated ifAbsent: [ false ]
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> isDeprecated: aValue [
+	everything at: #isDeprecated put: aValue
+]
+
 { #category : #testing }
 GtOpenApiSchema >> isObjectType [
 	^ self type = 'object'
@@ -302,6 +312,16 @@ GtOpenApiSchema >> not: aValue [
 	everything at: #not put: aValue
 ]
 
+{ #category : #accessing }
+GtOpenApiSchema >> nullable [
+	^ everything at: #nullable ifAbsent: [ false ]
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> nullable: aValue [
+	everything at: #nullable put: aValue
+]
+
 { #category : #enumerating }
 GtOpenApiSchema >> objectsDo: aBlock [
 	"Iterate all OpenApi objects. 
@@ -385,6 +405,16 @@ GtOpenApiSchema >> properties [
 { #category : #accessing }
 GtOpenApiSchema >> properties: aValue [
 	everything at: #properties put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> readOnly [
+	^ everything at: #readOnly ifAbsent: [ false ]
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> readOnly: aValue [
+	everything at: #readOnly put: aValue
 ]
 
 { #category : #accessing }

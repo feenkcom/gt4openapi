@@ -27,6 +27,10 @@ GtOpenApiReference >> gtDisplayOn: aStream [
 		ifNil: [ super gtDisplayOn: aStream.
 			^ self ].
 
+	self object isDictionary
+		ifTrue: [ super gtDisplayOn: aStream.
+			^ self ].
+
 	(self object isNotNil and: [ self object name isNotNil ])
 		ifTrue: [ aName := self object name asString ]
 		ifFalse: [ aName := self ref asString ].
@@ -34,6 +38,26 @@ GtOpenApiReference >> gtDisplayOn: aStream [
 	aStream
 		nextPutAll: 'Reference to ';
 		nextPutAll: aName
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiReference >> gtObjectDictionary: aView context: aContext [
+	<gtView>
+	| anExpansionLevel |
+	self object ifNil: [ ^ aView empty ].
+	self object isDictionary ifFalse: [ ^ aView empty ].
+
+	anExpansionLevel := aContext at: #gtTreeExpansionLevel ifAbsentPut: [ true ].
+
+	^ aView forward
+		title: 'Dictionary';
+		priority: 5;
+		object: [ self object ];
+		view: #gtTreeFor:context:;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Dictionary'
+			tooltip: 'Inspect dictionary object'
+			action: [ :aButton | aButton phlow spawnObject: self object ]
 ]
 
 { #category : #'gt - extensions' }
@@ -48,6 +72,13 @@ GtOpenApiReference >> gtOpenApiParameterViewText [
 	^ (self object isNotNil and: [ self object name isNotNil ])
 		ifTrue: [ self object name ]
 		ifFalse: [ self ref ifNil: [ 'reference' ] ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiReference >> gtOpenApiPathsViewChildren [
+	^ self object isNotNil
+		ifTrue: [ self object gtOpenApiPathsViewChildren ]
+		ifFalse: [ #() ]
 ]
 
 { #category : #'gt - extensions' }
@@ -66,6 +97,7 @@ GtOpenApiReference >> gtOpenApiViewSendObject [
 GtOpenApiReference >> gtPaintSchemaReferencesFor: aView context: aContext [
 	<gtView>
 	self object ifNil: [ ^ aView empty ].
+	self object isDictionary ifTrue: [ ^ aView empty ].
 	self object isSchema ifFalse: [ ^ aView empty ].
 
 	^ aView forward
@@ -77,6 +109,13 @@ GtOpenApiReference >> gtPaintSchemaReferencesFor: aView context: aContext [
 			label: 'Schema'
 			tooltip: 'Inspect schema'
 			action: [ :aButton | aButton phlow spawnObject: self object ]
+]
+
+{ #category : #'gt - extensions' }
+GtOpenApiReference >> gtPathsViewDescriptionText [
+	^ self object isNotNil
+		ifTrue: [ self object gtPathsViewDescriptionText ]
+		ifFalse: [ self ref ifNil: [ 'reference' ] ]
 ]
 
 { #category : #'gt - extensions' }
@@ -95,6 +134,7 @@ GtOpenApiReference >> gtPropertiesViewTypeText [
 GtOpenApiReference >> gtSchemaPropertiesFor: aView context: aContext [
 	<gtView>
 	self object ifNil: [ ^ aView empty ].
+	self object isDictionary ifTrue: [ ^ aView empty ].
 	self object isSchema ifFalse: [ ^ aView empty ].
 
 	^ aView forward
