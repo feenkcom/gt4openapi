@@ -4,6 +4,24 @@ Class {
 	#category : #'GToolkit4OpenAPI-Parser'
 }
 
+{ #category : #'gt - extensions' }
+GtOpenApiParser class >> gtViewParserMappingsFor: aView [
+	<gtView>
+	<gtClassView>
+	
+	^ aView forward 
+		title: 'Parser Mappings';
+		object: [ 
+			| parser reader |
+			parser := GtOpenApiParser new.
+
+			reader := NeoJSONReader new.
+			reader mapClass: OrderedDictionary.
+			parser initializeMappingsFor: reader.
+			reader ];
+		view: #gtViewMappingsFor:
+]
+
 { #category : #'api - parsing' }
 GtOpenApiParser class >> read: aSchemaName string: aString [
 	^ self new read: aSchemaName string: aString
