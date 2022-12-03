@@ -1,13 +1,8 @@
 Class {
 	#name : #GtOpenApiRequestBody,
 	#superclass : #Object,
-	#traits : 'TGtOpenApiObject',
-	#classTraits : 'TGtOpenApiObject classTrait',
-	#instVars : [
-		'description',
-		'content',
-		'isRequired'
-	],
+	#traits : 'TGtOpenApiObject + TGtOpenApiWithFields',
+	#classTraits : 'TGtOpenApiObject classTrait + TGtOpenApiWithFields classTrait',
 	#category : #'GToolkit4OpenAPI-Model'
 }
 
@@ -16,38 +11,61 @@ GtOpenApiRequestBody >> accept: aVisitor [
 	^ aVisitor visitGtOpenApiRequestBody: self
 ]
 
-{ #category : #accessing }
-GtOpenApiRequestBody >> content [
+{ #category : #'gt - extensions' }
+GtOpenApiRequestBody >> gtContentFor: aView context: aContext [
+	<gtView>
+	self content ifNil: [ ^ aView empty ].
 
-	^ content
+	aContext at: #gtTreeExpansionLevel ifAbsentPut: [ true ].
+
+	aContext
+		at: #gtTreeValueStyler
+		ifAbsentPut: [ [ :aNode | aNode value gtOpenApiContentViewResponseItemText ] ].
+
+	^ aView forward
+		title: 'Content';
+		priority: 2;
+		object: [ self content ];
+		view: #gtTreeFor:context:
 ]
 
-{ #category : #accessing }
-GtOpenApiRequestBody >> content: anObject [
+{ #category : #'gt - extensions' }
+GtOpenApiRequestBody >> gtDescriptionFor: aView [
+	<gtView>
+	self description ifNil: [ ^ aView empty ].
 
-	content := anObject
+	^ aView textEditor
+		title: 'Description';
+		priority: 1;
+		aptitude: BrGlamorousRegularEditorAptitude;
+		text: [ self description ]
 ]
 
-{ #category : #accessing }
-GtOpenApiRequestBody >> description [
+{ #category : #'gt - extensions' }
+GtOpenApiRequestBody >> gtPaintSchemaReferencesFor: aView context: aContext [
+	<gtView>
+	self content ifNil: [ ^ aView empty ].
+	self content ifEmpty: [ ^ aView empty ].
 
-	^ description
+	^ aView forward
+		title: 'Schema References';
+		priority: 5;
+		object: [ self content values first ];
+		view: #gtPaintSchemaReferencesFor:context:
 ]
 
-{ #category : #accessing }
-GtOpenApiRequestBody >> description: anObject [
+{ #category : #enumerating }
+GtOpenApiRequestBody >> objectsDo: aBlock [
+	"Iterate all OpenApi objects. 
+	The block is [ :anOpenApiObject :aParameterName | ].
+	aParameterName is a key value in case of dictionaries, 
+	e.g., Map[string, Callback Object | Reference Object]."
 
-	description := anObject
-]
 
-{ #category : #accessing }
-GtOpenApiRequestBody >> isRequired [
-
-	^ isRequired
-]
-
-{ #category : #accessing }
-GtOpenApiRequestBody >> isRequired: anObject [
-
-	isRequired := anObject
+	self content
+		ifNotNil: [ :aDict | 
+			aDict
+				keysAndValuesDo: [ :aName :aMediaType | 
+					aBlock cull: aMediaType cull: aName.
+					aMediaType objectsDo: aBlock ] ].
 ]

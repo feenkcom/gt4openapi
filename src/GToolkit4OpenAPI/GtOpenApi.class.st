@@ -184,7 +184,8 @@ GtOpenApi >> objectsDo: aBlock [
 			aPath objectsDo: aBlock ].
 	self components ifNotNil: [ :anObject | anObject withObjectsDo: aBlock ].
 	self tags
-		ifNotNil: [ :aCollection | aCollection do: [ :eachTag | eachTag withObjectsDo: aBlock ] ]
+		ifNotNil: [ :aCollection | 
+			aCollection do: [ :eachTag | eachTag withObjectsDo: aBlock ] ]
 ]
 
 { #category : #accessing }

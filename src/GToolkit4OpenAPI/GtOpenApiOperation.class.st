@@ -89,7 +89,18 @@ GtOpenApiOperation >> gtDescriptionFor: aView [
 
 { #category : #'gt - extensions' }
 GtOpenApiOperation >> gtOpenApiPathsViewChildren [
-	^ self responses
+	^ (self requestBody 
+		ifNotNil: [ :aRequestBody | 
+			{('request' asRopedText
+				italic;
+				foreground: BrGlamorousColors 
+					disabledButtonTextColor)  -> (
+						(GtOpenApiViewObject new
+								name: '';
+								description: aRequestBody description;
+								object: aRequestBody))} ]
+		ifNil: [ {} ])
+	, (self responses
 		ifNotNil: [ :aResponses | 
 			aResponses dictionary associations
 				collect: [ :anAssoc | 
@@ -100,7 +111,7 @@ GtOpenApiOperation >> gtOpenApiPathsViewChildren [
 								name: anAssoc key;
 								description: anAssoc value gtPathsViewDescriptionText;
 								object: anAssoc value) ] ]
-		ifNil: [ #() ]
+		ifNil: [ #() ])
 ]
 
 { #category : #'gt - extensions' }
@@ -202,6 +213,7 @@ GtOpenApiOperation >> objectsDo: aBlock [
 
 	self externalDocs ifNotNil: [ :anObject | anObject withObjectsDo: aBlock ].
 	self responses ifNotNil: [ :anObject | anObject withObjectsDo: aBlock ].
+	self requestBody ifNotNil: [ :anObject | anObject withObjectsDo: aBlock ].
 	self servers do: [ :anObject | anObject withObjectsDo: aBlock ].
 ]
 
