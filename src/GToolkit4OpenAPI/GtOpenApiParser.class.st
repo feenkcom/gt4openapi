@@ -72,6 +72,8 @@ GtOpenApiParser >> initializeMappingsFor: aMapper [
 	self mappingOfOpenApiPathItemFor: aMapper.
 	self mappingOfOpenApiOperationFor: aMapper.
 	self mappingOfOpenApiExternalDocumentationFor: aMapper.
+	self mappingOfOpenApiRequestBodyFor: aMapper.
+	self mappingOfReferenceOr: GtOpenApiRequestBody for: aMapper.
 	self mappingOfOpenApiParameterFor: aMapper.
 	self mappingOfOpenApiReferenceFor: aMapper.
 	self mappingOfCollectionOfReferenceOr: GtOpenApiParameter for: aMapper.
@@ -93,7 +95,7 @@ GtOpenApiParser >> initializeMappingsFor: aMapper [
 	self mappingOfReferenceOr: GtOpenApiHeader for: aMapper.
 	self mappingOfDictionaryOfReferenceOr: GtOpenApiLink for: aMapper.
 	self mappingOfOpenApiLinkFor: aMapper.
-	self mappingOfReferenceOr: GtOpenApiLink for: aMapper
+	self mappingOfReferenceOr: GtOpenApiLink for: aMapper.
 ]
 
 { #category : #'mapping - utilities' }
@@ -240,7 +242,8 @@ GtOpenApiParser >> mappingOfOpenApiOperationFor: aMapper [
 			mapping mapAccessor: #operationId.
 			(mapping mapAccessor: #parameters)
 				valueSchema: (self nameOfCollectionOfReferenceOr: GtOpenApiParameter).
-			mapping mapAccessor: #requestBody.	"valueSchema: #OpenApiRequestBodyOrReference"
+			(mapping mapAccessor: #requestBody)
+				valueSchema: (self nameOfReferenceOr: GtOpenApiRequestBody).
 			(mapping mapAccessor: #responses) valueSchema: GtOpenApiResponses.
 			mapping mapAccessor: #callbacks.	"valueSchema: #CollectionOfGtOpenApiCallaback"
 			mapping mapAccessor: #isDeprecated to: #deprecated.
@@ -293,6 +296,17 @@ GtOpenApiParser >> mappingOfOpenApiReferenceFor: aMapper [
 	aMapper
 		for: GtOpenApiReference
 		do: [ :mapping | mapping mapAccessor: #ref to: #'$ref' ]
+]
+
+{ #category : #initialization }
+GtOpenApiParser >> mappingOfOpenApiRequestBodyFor: aMapper [
+	aMapper
+		for: GtOpenApiRequestBody
+		do: [ :mapping | 
+			mapping mapOpenApiField: #description.
+			mapping mapOpenApiField: #required.
+			(mapping mapOpenApiField: #content)
+				valueSchema: (self nameOfDictionary: GtOpenApiMediaType)  ]
 ]
 
 { #category : #initialization }
@@ -448,10 +462,12 @@ GtOpenApiParser >> nameOfReferenceOr: aSchemaName [
 { #category : #'api - reading' }
 GtOpenApiParser >> read: aJsonSchema stream: aReadStream [
 	| aReader anOpenApiObject |
+	
 	aReader := NeoJSONReader on: aReadStream.
 	aReader mapClass: OrderedDictionary.
 	self initializeMappingsFor: aReader.
 	anOpenApiObject := aReader nextAs: aJsonSchema.
+	
 	GtOpenApiReferenceResolver new
 		rootObject: anOpenApiObject;
 		resolve.

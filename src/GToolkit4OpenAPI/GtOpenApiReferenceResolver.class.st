@@ -33,8 +33,8 @@ GtOpenApiReferenceResolver >> resolve [
 GtOpenApiReferenceResolver >> resolveObject: anOpenApiObject [
 	| aFragmentObject |
 	anOpenApiObject isReference ifFalse: [ ^ self ].
-
 	anOpenApiObject isDocumentReference ifFalse: [ ^ self ].
+	
 	stack := Stack withAll: anOpenApiObject fragments.
 	aFragmentObject := self rootObject.
 	[ stack isEmpty ]
