@@ -66,6 +66,14 @@ GtCodeGenModelExporter >> ensurePackageAndTagForBehavior: aRGBehavior [
 	self modelBuilder ensurePackageTagNamed: self packageTagName forBehavior: aRGBehavior
 ]
 
+{ #category : #'accessing - model' }
+GtCodeGenModelExporter >> existingClassOrNilFor: aMetamodelClassDefinition [
+	| className |
+	className := self namingStrategy 
+		classNameForDefinition: aMetamodelClassDefinition.
+	^ self modelBuilder behaviorNamed: className.
+]
+
 { #category : #accessing }
 GtCodeGenModelExporter >> extensions [
 	^ extensions
@@ -104,6 +112,16 @@ GtCodeGenModelExporter >> modelClassDefinitions [
 { #category : #'accessing - configuration' }
 GtCodeGenModelExporter >> modelClassPrefix [
 	^ self configuration modelClassPrefix
+]
+
+{ #category : #enumerating }
+GtCodeGenModelExporter >> modelDefinitionAndClassesDo: aBlockClosure [ 
+	self modelClassDefinitions do: [ :aModelClassDefinition | 
+		| targetClass |
+		targetClass := self 
+			existingClassOrNilFor: aModelClassDefinition.
+		targetClass ifNotNil: [ 
+			aBlockClosure cull: aModelClassDefinition cull: targetClass ] ]
 ]
 
 { #category : #'accessing - model' }

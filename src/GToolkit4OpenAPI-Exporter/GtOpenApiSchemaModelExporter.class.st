@@ -32,3 +32,8 @@ GtOpenApiSchemaModelExporter >> openApiModel [
 GtOpenApiSchemaModelExporter >> openApiModel: anOpenApiModel [
 	metaModel := anOpenApiModel
 ]
+
+{ #category : #'initialization - extensions - pharo' }
+GtOpenApiSchemaModelExporter >> useInstanceVariableAccessorsBuilder [
+	self addExtension: GtOpenApiPropertiesAccessorsExporterExtension new.
+]

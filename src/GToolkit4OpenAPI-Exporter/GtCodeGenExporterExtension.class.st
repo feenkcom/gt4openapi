@@ -32,6 +32,11 @@ GtCodeGenExporterExtension >> modelClassDefinitions [
 	^ self modelExporter modelClassDefinitions
 ]
 
+{ #category : #enumerating }
+GtCodeGenExporterExtension >> modelDefinitionAndClassesDo: aBlock [
+	self modelExporter modelDefinitionAndClassesDo: aBlock
+]
+
 { #category : #accessing }
 GtCodeGenExporterExtension >> modelExporter [
 
