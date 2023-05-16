@@ -101,7 +101,7 @@ GtOpenApiReference >> gtPaintSchemaReferencesFor: aView context: aContext [
 	self object isSchema ifFalse: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Schema References';
+		title: 'Schema references';
 		priority: 5;
 		object: [ self object ];
 		view: #gtPaintSchemaReferencesFor:context:;
@@ -138,7 +138,7 @@ GtOpenApiReference >> gtSchemaPropertiesFor: aView context: aContext [
 	self object isSchema ifFalse: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Schema Properties';
+		title: 'Schema properties';
 		priority: 1;
 		object: [ self object ];
 		view: #gtPropertiesFor:context:;

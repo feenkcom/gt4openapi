@@ -64,7 +64,7 @@ GtOpenApiResponse >> gtPaintSchemaReferencesFor: aView context: aContext [
 	self content ifEmpty: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Schema References';
+		title: 'Schema references';
 		priority: 5;
 		object: [ self content values first ];
 		view: #gtPaintSchemaReferencesFor:context:

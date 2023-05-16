@@ -131,7 +131,7 @@ GtOpenApiSchema >> gtOpenApiStructureViewText [
 GtOpenApiSchema >> gtPaintSchemaReferencesFor: aView context: aContext [
 	<gtView>
 	^ aView mondrian
-		title: 'Schema References';
+		title: 'Schema references';
 		priority: 5;
 		painting: [ :view | self paintSchemaReferences: self withAllReferencedSchemas on: view ]
 ]
