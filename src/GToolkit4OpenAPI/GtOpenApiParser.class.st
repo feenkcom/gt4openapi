@@ -10,7 +10,7 @@ GtOpenApiParser class >> gtViewParserMappingsFor: aView [
 	<gtClassView>
 	
 	^ aView forward 
-		title: 'Parser Mappings';
+		title: 'Parser mappings';
 		object: [ 
 			| parser reader |
 			parser := GtOpenApiParser new.

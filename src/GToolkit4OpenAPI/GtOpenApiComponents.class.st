@@ -62,7 +62,7 @@ GtOpenApiComponents >> examples: anObject [
 GtOpenApiComponents >> gtPaintSchemaReferencesFor: aView [
 	<gtView>
 	^ aView mondrian
-		title: 'Schema References';
+		title: 'Schema references';
 		priority: 5;
 		painting: [ :view | self paintSchemaReferences: self schemas values on: view ]
 ]
@@ -73,7 +73,7 @@ GtOpenApiComponents >> gtRootSchemasFor: aView [
 	self schemas ifNil: [ ^ aView empty ].
 
 	^ aView columnedTree
-		title: 'Root Schemas';
+		title: 'Root schemas';
 		priority: 2;
 		items: [ self rootSchemas sorted: [ :a :b | a name < b name ] ];
 		children: [ :aSchema | aSchema directlyReferencedSchemas reject: [ :each | each = aSchema ] ];

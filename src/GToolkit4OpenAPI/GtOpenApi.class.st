@@ -62,7 +62,7 @@ GtOpenApi >> gtComponentPaintSchemaReferencesFor: aView [
 	self components ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Schema References';
+		title: 'Schema references';
 		priority: 15;
 		object: [ self components ];
 		view: #gtPaintSchemaReferencesFor:
@@ -74,7 +74,7 @@ GtOpenApi >> gtComponentRootSchemasFor: aView [
 	self components ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Root Schemas';
+		title: 'Root schemas';
 		tooltip: 'Root schemas are those that are not used by other schemas';
 		priority: 13;
 		object: [ self components ];
@@ -117,7 +117,7 @@ GtOpenApi >> gtPathsPerOperationTagFor: aView [
 	self paths ifNil: [ ^ aView empty ].
 
 	^ aView columnedTree
-		title: 'Paths Per Tag';
+		title: 'Paths per tag';
 		priority: 6;
 		items: [ (self pathOperationTags asOrderedCollection sorted: [ :a :b | a name < b name ])
 				collect: [ :each | each name -> each ] ];

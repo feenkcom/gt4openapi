@@ -24,7 +24,7 @@ GtOpenApiMediaType >> gtPaintSchemaReferencesFor: aView context: aContext [
 	self schema ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Schema References';
+		title: 'Schema references';
 		priority: 5;
 		object: [ self schema ];
 		view: #gtPaintSchemaReferencesFor:context:
@@ -36,7 +36,7 @@ GtOpenApiMediaType >> gtSchemaPropertiesFor: aView context: aContext [
 	self schema ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Schema Properties';
+		title: 'Schema properties';
 		priority: 1;
 		object: [ self schema ];
 		view: #gtSchemaPropertiesFor:context:
