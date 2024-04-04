@@ -164,6 +164,8 @@ GtOpenApiParser >> mappingOfOpenApiFor: aMapper [
 		for: GtOpenApi
 		do: [ :mapping | 
 			mapping mapAccessor: #openapi.
+			mapping mapAccessor: #swagger.
+			mapping mapAccessor: #basePath.
 			(mapping mapAccessor: #info) valueSchema: GtOpenApiInfo.
 			(mapping mapAccessor: #servers)
 				valueSchema: (self nameOfCollection: GtOpenApiServer).
