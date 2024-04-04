@@ -206,21 +206,13 @@ GtOpenApiComponents >> responses: anObject [
 
 { #category : #accessing }
 GtOpenApiComponents >> rootSchemas [
-	^ self schemas values
-		select: [ :eachSchema | 
-			self schemas
-				allSatisfy: [ :otherSchema | 
-					| isNotReferenced |
-					isNotReferenced := true.
-					otherSchema = eachSchema
-						ifFalse: [ otherSchema properties values
-								do: [ :eachProperty | 
-									eachProperty
-										withObjectsDo: [ :eachObject | 
-											(eachObject isReference
-												and: [ eachObject object isNotNil and: [ eachObject object = eachSchema ] ])
-												ifTrue: [ isNotReferenced := false ] ] ] ].
-					isNotReferenced ] ]
+	| referencedSchemas |
+	referencedSchemas := Set new.
+
+	self schemas values
+		do: [ :eachSchema | referencedSchemas addAll: eachSchema directlyReferencedSchemas ].
+
+	^ self schemas values copyWithoutAll: referencedSchemas
 ]
 
 { #category : #accessing }
@@ -241,15 +233,17 @@ GtOpenApiComponents >> schemasThatUseSchema: aSchema [
 		select: [ :eachSchema | 
 			| isUser |
 			isUser := false.
-			eachSchema properties values
-				do: [ :eachProperty | 
-					(eachProperty isReference and: [ eachProperty object = aSchema ])
-						ifTrue: [ isUser := true ].
+			eachSchema isReference
+				ifTrue: [ eachSchema object = aSchema ifTrue: [ isUser := true ] ]
+				ifFalse: [ eachSchema properties values
+						do: [ :eachProperty | 
+							(eachProperty isReference and: [ eachProperty object = aSchema ])
+								ifTrue: [ isUser := true ].
 
-					(eachProperty isSchema
-						and: [ eachProperty isArrayType
-								and: [ eachProperty items isReference and: [ eachProperty items object = aSchema ] ] ])
-						ifTrue: [ isUser := true ] ].
+							(eachProperty isSchema
+								and: [ eachProperty isArrayType
+										and: [ eachProperty items isReference and: [ eachProperty items object = aSchema ] ] ])
+								ifTrue: [ isUser := true ] ] ].
 
 			isUser ]
 ]

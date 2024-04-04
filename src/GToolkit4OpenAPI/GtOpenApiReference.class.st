@@ -5,7 +5,8 @@ Class {
 	#classTraits : 'TGtOpenApiObject classTrait',
 	#instVars : [
 		'ref',
-		'object'
+		'object',
+		'name'
 	],
 	#category : #'GToolkit4OpenAPI-Model'
 }
@@ -13,6 +14,13 @@ Class {
 { #category : #visiting }
 GtOpenApiReference >> accept: aVisitor [
 	^ aVisitor visitGtOpenApiReference: self
+]
+
+{ #category : #accessing }
+GtOpenApiReference >> directlyReferencedSchemas [
+	"For compatibility with schema."
+
+	^ self object ifNotNil: #directlyReferencedSchemas ifNil: [ #() ]
 ]
 
 { #category : #accessing }
@@ -159,6 +167,16 @@ GtOpenApiReference >> isReference [
 ]
 
 { #category : #accessing }
+GtOpenApiReference >> name [
+	^ name ifNil: [ self object ifNotNil: #name ]
+]
+
+{ #category : #accessing }
+GtOpenApiReference >> name: anObject [
+	name := anObject
+]
+
+{ #category : #accessing }
 GtOpenApiReference >> object [
 
 	^ object
@@ -189,6 +207,13 @@ GtOpenApiReference >> printOn: aStream [
 		nextPut: $(;
 		nextPutAll: self ref asString;
 		nextPut: $)
+]
+
+{ #category : #accessing }
+GtOpenApiReference >> properties [
+	"For compatibility with schema."
+
+	^ self object ifNotNil: #properties ifNil: [ OrderedDictionary new ]
 ]
 
 { #category : #accessing }
