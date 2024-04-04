@@ -17,7 +17,8 @@ Class {
 		'components',
 		'security',
 		'tags',
-		'externalDocs'
+		'externalDocs',
+		'basePath'
 	],
 	#category : #'GToolkit4OpenAPI-Core'
 }
@@ -30,6 +31,16 @@ GtOpenApi class >> fromJsonString: aString [
 { #category : #visiting }
 GtOpenApi >> accept: aVisitor [
 	^ aVisitor visitGtOpenApi: self
+]
+
+{ #category : #accessing }
+GtOpenApi >> basePath [
+	^ basePath
+]
+
+{ #category : #accessing }
+GtOpenApi >> basePath: anObject [
+	basePath := anObject
 ]
 
 { #category : #accessing }
@@ -252,6 +263,16 @@ GtOpenApi >> servers [
 GtOpenApi >> servers: anObject [
 
 	servers := anObject
+]
+
+{ #category : #accessing }
+GtOpenApi >> swagger [
+	^ self openapi
+]
+
+{ #category : #accessing }
+GtOpenApi >> swagger: aString [
+	self openapi: aString
 ]
 
 { #category : #accessing }
