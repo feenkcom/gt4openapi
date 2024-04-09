@@ -18,7 +18,9 @@ Class {
 		'security',
 		'tags',
 		'externalDocs',
-		'basePath'
+		'basePath',
+		'consumes',
+		'produces'
 	],
 	#category : #'GToolkit4OpenAPI-Core'
 }
@@ -53,6 +55,16 @@ GtOpenApi >> components [
 GtOpenApi >> components: anObject [
 
 	components := anObject
+]
+
+{ #category : #accessing }
+GtOpenApi >> consumes [
+	^ consumes ifNil: [ #() ]
+]
+
+{ #category : #accessing }
+GtOpenApi >> consumes: anObject [
+	consumes := anObject
 ]
 
 { #category : #accessing }
@@ -240,6 +252,16 @@ GtOpenApi >> paths: aDictionary [
 GtOpenApi >> pathsWithOperationTag: aTag [
 	^ self paths
 		select: [ :eachPath | eachPath includesOperationWithTagNamed: aTag name ]
+]
+
+{ #category : #accessing }
+GtOpenApi >> produces [
+	^ produces ifNil: [ #() ]
+]
+
+{ #category : #accessing }
+GtOpenApi >> produces: anObject [
+	produces := anObject
 ]
 
 { #category : #accessing }
