@@ -108,6 +108,13 @@ GtOpenApiComponents >> gtSchemasFor: aView [
 						(self schemasThatUseSchema: anAssoc value)
 							do: [ :eachSchema | aStream nextPutAll: eachSchema name ]
 							separatedBy: [ aStream nextPutAll: ', ' ] ] ];
+		column: 'Uses'
+			text: [ :anAssoc | 
+				String
+					streamContents: [ :aStream | 
+						(anAssoc value directlyReferencedSchemas)
+							do: [ :eachSchema | aStream nextPutAll: eachSchema name ]
+							separatedBy: [ aStream nextPutAll: ', ' ] ] ];
 		send: #value
 ]
 
@@ -153,26 +160,26 @@ GtOpenApiComponents >> objectsDo: aBlock [
 { #category : #'gt - extensions' }
 GtOpenApiComponents >> paintSchemaReferences: aCollectionOfSchemas on: aView [
 	aView nodes
-		stencil: [ :aSchema | 
+		"stencil: [ :aSchema | 
 			BrLabel new
 				fitContent;
 				aptitude: BrGlamorousLabelAptitude;
-				text: aSchema name ];
+				text: aSchema name ];"
 		with: aCollectionOfSchemas.
 
 	aView edges
 		stencil: [ :each | 
 			| aColor |
-			aColor := Color gray.
+			aColor := Color gray alpha: 0.5.
 			BlLineElement new
-				border: (BlBorder paint: aColor width: 1);
-				toHead: (BlArrowheadSimpleArrow new border: (BlBorder paint: aColor width: 1)) ];
+				border: (BlBorder paint: aColor width: 1)";
+				toHead: (BlArrowheadSimpleArrow new border: (BlBorder paint: aColor width: 1))" ];
 		connectToAll: [ :aSchema | 
 			aSchema properties values
 				select: [ :eachProperty | eachProperty isReference ]
 				thenCollect: #object ].
 
-	aView layout horizontalTree
+	aView layout horizontalDominanceTree
 		levelDistance: 30;
 		nodeDistance: 30;
 		treesDistance: 30.
