@@ -370,10 +370,7 @@ GtOpenApiSchema >> paintSchemaReferences: aCollectionOfSchema on: aView [
 						toHead: (BlArrowheadSimpleArrow new border: (BlBorder paint: aColor width: 1)) ] ];
 		connectToAll: [ :aSchema | aSchema directlyReferencedSchemas ].
 
-	aView layout force
-		strength: 0.15;
-		charge: -350;
-		length: 100.
+	aView layout dominanceTree.
 
 	aView
 ]
