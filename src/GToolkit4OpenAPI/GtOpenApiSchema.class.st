@@ -464,3 +464,23 @@ GtOpenApiSchema >> withAllReferencedSchemas [
 		beNamedObjectSchemas;
 		collect
 ]
+
+{ #category : #accessing }
+GtOpenApiSchema >> writeOnly [
+	^ everything at: #writeOnly ifAbsent: [ false ]
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> writeOnly: aValue [
+	everything at: #writeOnly put: aValue
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> xml [
+	^ everything at: #xml ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+GtOpenApiSchema >> xml: aValue [
+	everything at: #xml put: aValue
+]
