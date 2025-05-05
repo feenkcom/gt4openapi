@@ -7,12 +7,14 @@ Class {
 { #category : #accessing }
 GtOpenApiExamples >> openApi301Json [
 	<gtExample>
+	<return: #Dictionary>
 	^ STONJSON fromString: self openApi301JsonString
 ]
 
 { #category : #accessing }
 GtOpenApiExamples >> openApi301JsonString [
 	<gtExample>
+	<return: #ByteString>
 	^ '{
 		"openapi":"3.0.1",
 		"info": {
@@ -88,6 +90,7 @@ GtOpenApiExamples >> openApi301JsonString [
 { #category : #accessing }
 GtOpenApiExamples >> openApi301Object [
 	<gtExample>
+	<return: #GtOpenApi>
 	| anOpenApi |
 	anOpenApi := self parser readString: self openApi301JsonString.
 
@@ -99,6 +102,7 @@ GtOpenApiExamples >> openApi301Object [
 { #category : #accessing }
 GtOpenApiExamples >> openApiMediaTypeJsonString [
 	<gtExample>
+	<return: #ByteString>
 	^ '{
   "application/json": {
     "schema": {
@@ -137,6 +141,7 @@ GtOpenApiExamples >> openApiMediaTypeJsonString [
 { #category : #accessing }
 GtOpenApiExamples >> openApiMediaTypeObject [
 	<gtExample>
+	<return: #OrderedDictionary>
 	| aDictionary aMediaType |
 	aDictionary := self parser
 			read: (GtOpenApiMappingUtility nameOfDictionary: GtOpenApiMediaType)
@@ -158,6 +163,7 @@ GtOpenApiExamples >> openApiMediaTypeObject [
 { #category : #accessing }
 GtOpenApiExamples >> openApiPathItemJsonString [
 	<gtExample>
+	<return: #ByteString>
 	^ '{
   "get": {
     "description": "Returns pets based on ID",
@@ -210,6 +216,7 @@ GtOpenApiExamples >> openApiPathItemJsonString [
 { #category : #accessing }
 GtOpenApiExamples >> openApiPathItemObject [
 	<gtExample>
+	<return: #GtOpenApiPathItem>
 	| anOpenApi a200Code |
 	anOpenApi := self parser
 			read: GtOpenApiPathItem
@@ -232,5 +239,6 @@ GtOpenApiExamples >> openApiPathItemObject [
 { #category : #accessing }
 GtOpenApiExamples >> parser [
 	<gtExample>
+	<return: #'GtOpenApiParser class'>
 	^ GtOpenApiParser
 ]
