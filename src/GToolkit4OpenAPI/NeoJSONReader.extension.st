@@ -26,14 +26,15 @@ NeoJSONReader >> peekPropertyName [
 
 { #category : #'*GToolkit4OpenAPI' }
 NeoJSONReader >> peekPropertyNames [
-	"We want to figure out what object we want to read 
+	"We want to figure out what object we want to read
 	based on the first parameter name (dictionary key)."
 
 	| stream parsedValue |
-	stream := readStream clone.
+	stream := self
+		gtDo: [ readStream clone ]
+		gemstoneDo: [ readStream shallowCopy ].
 
 	parsedValue := self parseValue.
-	
 	readStream := stream.
 	^ parsedValue keys
 ]
