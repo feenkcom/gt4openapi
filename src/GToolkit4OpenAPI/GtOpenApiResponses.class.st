@@ -28,7 +28,7 @@ GtOpenApiResponses >> collect: aBlock [
 { #category : #accessing }
 GtOpenApiResponses >> default [
 	self dictionary ifNil: [ ^ nil ].
-	^ self dictionary at: #default ifAbsent: [ nil ]
+	^ self dictionary at: 'default' ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
