@@ -20,7 +20,7 @@ GtOpenApiReference >> accept: aVisitor [
 GtOpenApiReference >> directlyReferencedSchemas [
 	"For compatibility with schema."
 
-	^ self object ifNotNil: #directlyReferencedSchemas ifNil: [ #() ]
+	^ self object ifNotNil: [ :v | v directlyReferencedSchemas ] ifNil: [ #() ]
 ]
 
 { #category : #accessing }
@@ -98,7 +98,7 @@ GtOpenApiReference >> gtOpenApiStructureViewText [
 
 { #category : #'gt - extensions' }
 GtOpenApiReference >> gtOpenApiViewSendObject [
-	^ self object ifNotNil: #gtOpenApiViewSendObject ifNil: [ self ]
+	^ self object ifNotNil: [ :v | v gtOpenApiViewSendObject ] ifNil: [ self ]
 ]
 
 { #category : #'gt - extensions' }
@@ -168,7 +168,7 @@ GtOpenApiReference >> isReference [
 
 { #category : #accessing }
 GtOpenApiReference >> name [
-	^ name ifNil: [ self object ifNotNil: #name ]
+	^ name ifNil: [ self object ifNotNil: [ :v | v name ] ]
 ]
 
 { #category : #accessing }
@@ -213,7 +213,7 @@ GtOpenApiReference >> printOn: aStream [
 GtOpenApiReference >> properties [
 	"For compatibility with schema."
 
-	^ self object ifNotNil: #properties ifNil: [ OrderedDictionary new ]
+	^ self object ifNotNil: [ :v | v properties ] ifNil: [ OrderedDictionary new ]
 ]
 
 { #category : #accessing }
