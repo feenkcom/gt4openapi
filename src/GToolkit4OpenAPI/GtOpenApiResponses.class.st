@@ -77,5 +77,5 @@ GtOpenApiResponses >> objectsDo: aBlock [
 
 { #category : #accessing }
 GtOpenApiResponses >> size [
-	^ self dictionary ifNotNil: #size ifNil: [ 0 ]
+	^ self dictionary ifNotNil: [ :v | v size ] ifNil: [ 0 ]
 ]
